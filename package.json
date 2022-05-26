@@ -1,0 +1,23 @@
+{
+  "name": "rails_practice_note",
+  "version": "1.0.0",
+  "description": "Rails練習帳",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/igaiga/rails_practice_note.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/igaiga/rails_practice_note/issues"
+  },
+  "homepage": "https://github.com/igaiga/rails_practice_note#readme",
+  "dependencies": {
+    "zenn-cli": "^0.1.110"
+  }
+}
