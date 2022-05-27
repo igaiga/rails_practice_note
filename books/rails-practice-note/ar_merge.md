@@ -1,4 +1,8 @@
-# ActiveRecord mergeメソッド
+---
+title: "[ActiveRecord] mergeメソッド"
+---
+
+# [ActiveRecord] mergeメソッド
 
 AR::ReleationオブジェクトにmergeメソッドをつかってAR::Releationを渡すと、AR::Releation同士を結合することができます。
 

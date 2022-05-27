@@ -1,0 +1,9 @@
+title: "Rails練習帳"
+summary: "Railsの学習記事です"
+topics: ["Rails", "Ruby"]
+published: true
+price: 0 # 有料の場合200〜5000
+# 本に含めるチャプターを順番に並べましょう
+chapters:
+  - preface
+  - ar_merge
