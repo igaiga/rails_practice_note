@@ -10,3 +10,4 @@ chapters:
   - ar_merge
   - ar_irregular_foreign_key
   - ar_inverse_of
+  - rack_and_rack_middleware
