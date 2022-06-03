@@ -11,3 +11,10 @@ title: "はじめに"
 どのチャプターからでも読みはじめられるようになっていますので、読みたいところから読んでみてください。
 
 少しずつ書きためていくので、少しずつチャプターが増えていく予定です。そのため、チャプター番号が変わることもあります。
+
+- Railsの教科書
+  - https://tatsu-zine.com/books/rails-textbook
+- Railsガイド
+  - https://railsguides.jp
+- パーフェクトRails 増補改訂版
+  - https://gihyo.jp/book/2020/978-4-297-11462-6
