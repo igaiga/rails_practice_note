@@ -8,6 +8,7 @@ price: 0 # 有料の場合200〜5000
 chapters:
   - preface
   - ar_merge
+  - ar_select_pluck
   - ar_irregular_foreign_key
   - ar_inverse_of
   - rack_and_rack_middleware
