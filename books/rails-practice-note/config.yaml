@@ -11,5 +11,6 @@ chapters:
   - ar_select_pluck
   - ar_irregular_foreign_key
   - ar_inverse_of
+  - ar_through_source
   - rack_and_rack_middleware
   - object_space
