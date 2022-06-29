@@ -18,7 +18,16 @@ Rubyの組込ライブラリであるObjectSpaceをつかうとオブジェク�
 ObjectSpace.each_object(String)
 ```
 
-ただし、シングルトンなもの、たとえばSymbolではこの方法は使えません。全Symbolオブジェクトを取得する場合は代わりに `Symbol.all_symbols` がつかえます。
+ただし、たとえば次のクラスではこの方法はつかえません。
+
+- Symbol
+- Integer
+- Float
+- TrueClass
+- FalseClass
+- NilClass
+
+全Symbolオブジェクトを取得する場合は代わりに `Symbol.all_symbols` がつかえます。
 
 ## クラス一覧を取得
 
