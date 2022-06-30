@@ -15,3 +15,5 @@ chapters:
   - ruby_and_rails_references
   - rack_and_rack_middleware
   - object_space
+  - argument_literals
+
