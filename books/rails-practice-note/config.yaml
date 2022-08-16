@@ -15,6 +15,7 @@ chapters:
   - ar_prefer_current_user_relations
   - ruby_and_rails_references
   - rack_and_rack_middleware
+  - remaining_variables
   - object_space
   - argument_literals
 
