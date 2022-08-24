@@ -9,6 +9,7 @@ chapters:
   - preface
   - ar_merge
   - ar_select_pluck
+  - ar_group_having_count
   - ar_irregular_foreign_key
   - ar_inverse_of
   - ar_through_source
