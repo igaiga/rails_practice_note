@@ -2,6 +2,8 @@
 title: "[ActiveRecord] selectとpluckの違い"
 ---
 
+# [ActiveRecord] selectとpluckの違い
+
 ActiveRecordのselectメソッドとpluckメソッドは次のように動きます。
 
 - selectはActiveRecordオブジェクトの配列が取得され、pluckは結果の値の配列が取れる
