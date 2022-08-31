@@ -12,6 +12,7 @@ chapters:
   - ar_irregular_foreign_key
   - ar_inverse_of
   - ar_through_source
+  - ar_sql_injection
   - ar_prefer_current_user_relations
   - ruby_and_rails_references
   - rack_and_rack_middleware
