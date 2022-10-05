@@ -15,7 +15,7 @@ chapters:
   - ar_sql_injection
   - ar_prefer_current_user_relations
   - ruby_and_rails_references
-  - rack_and_rack_middleware
+  - rack_middleware_and_rack
   - remaining_variables
   - argument_literals
   - ruby_debugging
