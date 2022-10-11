@@ -52,6 +52,28 @@ class FooController < ApplicationController
 ...
 ```
 
+### グローバル変数のテストコード
+
+```ruby
+class FooController < ApplicationController
+  def index
+    $foo ||= 0
+    $foo += 1
+    p "グローバル変数: #{$foo}"
+  end
+```
+
+### クラス変数のテストコード
+
+```ruby
+class FooController < ApplicationController
+  def index
+    @@foo ||= 0
+    @@foo += 1
+    p "クラス変数: #{@@foo}"
+  end
+```
+
 ### クラスインスタンス変数のテストコード
 
 ```ruby
@@ -59,18 +81,29 @@ class FooController < ApplicationController
   @foo ||= 0
   def index
     self.class.instance_variable_set(:@foo, self.class.instance_variable_get(:@foo)+1)
-    p self.class.instance_variable_get(:@foo)
+    p "クラスインスタンス変数: #{self.class.instance_variable_get(:@foo)}"
   end
 ```
 
-### Thread.currentのテストコード
+### インスタンス変数のテストコード
+
+```ruby
+class FooController < ApplicationController
+  def index
+    @foo ||= 0
+    @foo += 1
+    p "インスタンス変数: #{@foo}"
+  end
+```
+
+### スレッドローカル変数のテストコード
 
 ```ruby
 class FooController < ApplicationController
   def index
     Thread.current[:foo] ||= 0
     Thread.current[:foo] += 1
-    p Thread.current[:foo]
+    p "スレッドローカル変数: #{Thread.current[:foo]}"
   end
 ```
 
