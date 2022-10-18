@@ -37,7 +37,7 @@ class Foo
   end
 end
 
-Foo.new.bar
+Foo.new.bar(555)
 ```
 
 事前にターミナルで `gem install debug` を実行してから、サンプルコードを実行します。
