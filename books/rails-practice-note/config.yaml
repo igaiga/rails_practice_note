@@ -20,6 +20,5 @@ chapters:
   - argument_literals
   - ruby_debugging
   - ruby_debug_gem
-  - object_space
   - writing_sponsors
 
