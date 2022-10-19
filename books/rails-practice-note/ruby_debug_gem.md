@@ -48,7 +48,7 @@ $ gem install debug
 $ ruby debug_sample.rb
 ```
 
-ターミナルで実行すると、次のようにbinding.breakを書いたところで一時停止してデバッグコンソールが起動します。
+ターミナルで実行すると、次のようにbinding.breakを書いたところで一時停止してデバッグコンソールが起動します。実際の画面では色つきで見やすく表示されます。
 
 ```console
 $ ruby debug_sample.rb
@@ -68,13 +68,14 @@ $ ruby debug_sample.rb
 (rdbg)
 ```
 
-デバッグコンソール上ではirbのようにRubyのコードを実行することができます。`next`コマンドで1行ずつステップ実行、`continue`コマンドで一時停止を解除してプログラムを再開します。`help`コマンドでデバッグコンソール上で利用できるコマンドの説明が表示されます。また、実際の画面では色付きで見やすく表示されます。
-
 一時停止したときのメソッド呼び出し履歴が表示されますが、メソッド呼び出し時に渡された引数もあわせて表示されるのが便利です。
 
-そのほかのつかい方はdebug gemのGitHubページなどを参考にしてください。
+デバッグコンソール上ではirbのようにRubyのコードを実行することができます。`next` or `n` コマンドで1行ずつステップ実行、`continue` or `c` コマンドで一時停止を解除してプログラムを再開します。`help`コマンドでデバッグコンソール上で利用できるコマンドの説明が表示されます。
+
+コマンドの一覧や、そのほかのつかい方はdebug gemのGitHubページなどを参考にしてください。
 
 - [debug gem GitHub](https://github.com/ruby/debug) 
+- [コマンド一覧](https://github.com/ruby/debug#debug-command-on-the-debug-console)
 
 ## Chromeデベロッパーツールをつかってデバッグ
 
@@ -125,7 +126,7 @@ class BooksController < ApplicationController
 ...
 ```
 
-rails sしてブラウザから該当ページへアクセスすると、rails sしているターミナルでデバッグコンソールが起動します。
+ターミナルでrails sを起動してブラウザから該当ページへアクセスすると、そのターミナルでデバッグコンソールが起動します。
 
 ```console
 Started GET "/books" for ::1 at 2022-09-30 09:50:10 +0900
@@ -147,7 +148,7 @@ Processing by BooksController#index as HTML
 (rdbg)
 ```
 
-デバッグコンソールで`i i`コマンドを実行すると、インスタンス変数と代入されているオブジェクトの一覧を表示できます。
+デバッグコンソールで`i i`コマンドを実行すると、インスタンス変数と代入されているオブジェクトの一覧を表示できます。ほかの変数を見るコマンドは、`help` コマンドや前述のコマンド一覧のページを参考にしてください。
 
 ここでもChromeデベロッパーツールをつかいたいときには `open chrome` コマンドを実行します。
 
