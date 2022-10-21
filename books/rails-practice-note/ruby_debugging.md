@@ -269,6 +269,114 @@ $ RUBYOPT="-I. -rrequire_objectspace.rb" rake some_tasks
 
 -Iオプションはファイルをロードするパスを追加するオプションです。`-I.`でカレントディレクトリを追加します。-rオプションは実行前にrequireを行うオプションです。RUBYOPT環境変数をつかうと、rubyコマンドを直接実行しないコマンドへオプションを指定することができます。
 
+## TracePoint
+
+Rubyの組込ライブラリであるTracePointをつかうとさまざまなイベントをフックしてあらかじめ指定したコードを実行できます。フック可能なイベントはメソッド呼び出し、例外発生、式実行などいくつか用意されています。`TracePoint.trace(イベント種別指定) do end` と書くと、以降の実行コードからイベントの監視を始めます。
+
+TracePointで監視を始めると実行速度はかなり遅くなります。速度低下を減らすためには、たとえば `TracePoint#enable(target_line:)` をつかって指定した行のみで TracePoint を有効にすることで速度低下範囲を狭めることができます。debug gemの[traceコマンド](https://github.com/ruby/debug#trace)では監視機能を便利につかえるように提供しているので、debug gemをつかってかんたんに速度低下を少なく監視できるか調べてみるのも良い方法です。
+
+### 監視できるイベント
+
+たとえば次のようなイベントを監視できます。
+
+- :line 式の評価
+- :call Rubyで書かれたメソッドの実行
+- :c_call Cで書かれたメソッドの実行
+  - Rubyが提供するライブラリやGemの中にはCで書かれたメソッドもあります
+- :b_call ブロック実行
+- :raise 例外発生
+
+- 全てのイベントはこのページで見れます
+    - https://docs.ruby-lang.org/ja/latest/method/TracePoint/s/new.html
+
+### 式実行時にブロック実行
+
+次のコードは、式実行時に指定したブロックを実行するTracePointをつかったサンプルコードです。
+
+
+```ruby
+class Foo
+  def bar
+    "bar method" # 3行目
+  end
+end
+
+TracePoint.trace(:line) do |tp| # 引数に:lineを渡すと式実行時にブロック実行
+  # ブロック引数にはTracePontオブジェクトが渡される
+  puts "[TP:#{tp.event}] #{tp.path}:#{tp.lineno}"
+end
+Foo.new.bar # 10行目
+
+#=> [TP:line] example.rb:10
+#=> [TP:line] example.rb:3
+```
+
+`TracePoint.trace`メソッドに引数で監視するイベントを渡します。ここでは `:line` を渡して式実行を監視するので、全ての実行行で渡したブロックが実行されます。
+
+ブロック引数にはTracePointオブジェクトが渡されます。TracePointオブジェクトからは、たとえば次のような情報が取れます。取得できる情報は、イベントごとに異なります。
+
+```ruby
+TracePoint.trace(:line) do |tp|
+  p tp.event # イベント名
+  p tp.path # 実行されたソースコードのファイルパス 
+  p tp.lineno # 実行された行番号
+  p tp.method_id # 実行されたメソッド名
+  p tp.defined_class # 実行されたメソッドが定義されたクラス
+end
+```
+
+また、`tp.binding` で実行された場所でのBindingオブジェクトが取得できるので、たとえば `tp.binding.local_variables` で実行された行のスコープでのローカル変数一覧を取得できます。
+
+### Railsアプリへ組み込み
+
+RailsアプリでTracePointをつかうときは、たとえばconfig/initializers以下に次のコードを配置すればOKです。
+
+```ruby
+TracePoint.trace(:raise) do |tp|
+  puts "[Event:#{tp.event}] #{tp.path}:#{tp.lineno} #{tp.method_id} #{tp.defined_class}"
+end
+```
+
+rails sなどを起動してアクセスし、標準出力を観察してみてください。traceメソッドに`:raise`を渡しているので、例外発生時にログが出力されます。たとえば`:line`を渡すと、たくさん表示されて実行速度がすごく遅くなるので注意です。
+
+
+### 全てのイベントを観察
+
+traceメソッドにイベントを渡さないと、全てのイベントを監視します。ブロックが呼ばれる回数は増えるので、実行速度はかなり遅くなります。
+
+```ruby
+trace = TracePoint.trace do |tp|
+  puts "[Event:#{tp.event}] #{tp.path}:#{tp.lineno} #{tp.method_id} #{tp.defined_class}"
+end
+
+class Foo
+  def bar
+    "bar method"
+  end
+end
+
+Foo.new.bar
+```
+
+```
+[Event:line] example.rb:5
+[Event:c_call] example.rb:5 inherited Class
+[Event:c_return] example.rb:5 inherited Class
+[Event:class] example.rb:5
+[Event:line] example.rb:6
+[Event:c_call] example.rb:6 method_added Module
+[Event:c_return] example.rb:6 method_added Module
+[Event:end] example.rb:9
+[Event:line] example.rb:11
+[Event:c_call] example.rb:11 new Class
+[Event:c_call] example.rb:11 initialize BasicObject
+[Event:c_return] example.rb:11 initialize BasicObject
+[Event:c_return] example.rb:11 new Class
+[Event:call] example.rb:6 bar Foo
+[Event:line] example.rb:7 bar Foo
+[Event:return] example.rb:8 bar Foo
+```
+
 ## 参考資料
 
 - I am a puts debuggerer
