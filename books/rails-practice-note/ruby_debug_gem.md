@@ -166,7 +166,7 @@ Dockerコンテナをポート接続オプションをつけて起動します�
 docker run -v /Users/igaiga/work:/work -p 45555:45555 --rm -it rubylang/ruby /bin/bash
 ```
 
-Docker上でRubyコードを実行します。debug gemがリッスンする接続用ポートと接続元IPアドレスをそれぞれ環境変数で指定します。接続元IPアドレスは任意のものを許可する0.0.0.0を指定しています。
+Docker上でRubyコードを実行します。debug gemがリッスンする接続用ポートを環境変数 `RUBY_DEBUG_PORT` で、接続元IPアドレスを環境変数 `RUBY_DEBUG_HOST` で指定します。接続元IPアドレスは任意のものを許可する0.0.0.0を指定します。
 
 debug_sample.rbはさきほどと同じコードをつかいます。一時停止したいところに`binding.break`が書いてあります。必要であれば事前に`gem install debug`を実行してdebug gemをインストールします。
 
@@ -175,7 +175,7 @@ debug_sample.rbはさきほどと同じコードをつかいます。一時停�
 ```console
 gem install debug
 cd /work
-RUBY_DEBUG_PORT=45555 RUBY_DEBUG_HOST=0.0.0.0 bin/rails s
+RUBY_DEBUG_PORT=45555 RUBY_DEBUG_HOST=0.0.0.0 ruby debug_sample.rb
 ```
 
 デバッグコンソールが起動するするので、open chromeコマンドを実行します。
@@ -193,7 +193,7 @@ devtools://devtools/bundled/inspector.html?v8only=true&panel=sources&ws=0.0.0.0:
 
 ## Docker上で起動しているRailsアプリをホスト上のChromeからデバッグ
 
-次は、Docker上で動いているRailsアプリをホスト上のChromeからデバッグするときの手順です。先ほどと同様の手順に加えて、rails serverでアクセスする3000番ポートも接続する設定でDockerを起動します。Dockerコンテナは例としてCircleCIが提供しているcimg/rubyをつかっています。マウント設定 `-v /Users/igaiga/work:/work` のホスト側パス `/Users/igaiga/work` の下にRailsアプリのフォルダ(以下の例ではrails_app_name)を置きます。
+次は、Docker上で動いているRailsアプリをホスト上のChromeからデバッグするときの手順です。先ほどと同様の手順に加えて、rails serverでアクセスする3000番ポートも接続する設定でDockerを起動します。Dockerコンテナは例としてCircleCIが提供しているcimg/rubyをつかっています。マウント設定 `-v /Users/igaiga/work:/work` のホスト側パス `/Users/igaiga/work` の下にRailsアプリを置いておきます。以下の例ではRailsアプリ名はrails_app_nameとしています。
 
 (ホスト)
 
@@ -201,7 +201,7 @@ devtools://devtools/bundled/inspector.html?v8only=true&panel=sources&ws=0.0.0.0:
 docker run -v /Users/igaiga/work:/work -p 45555:45555 -p 3000:3000 --rm -it cimg/ruby:3.1.2 /bin/bash
 ```
 
-rails sを起動するときに`-b 0.0.0.0`オプションを加えて、rails serverに任意のIPアドレスからアクセスできるようにします。
+rails sを起動するときに`-b 0.0.0.0`オプションを加えて、rails serverが任意のIPアドレスからアクセス可能になるよう設定します。
 
 (Docker)
 
@@ -212,6 +212,44 @@ RUBY_DEBUG_PORT=45555 RUBY_DEBUG_HOST=0.0.0.0 bin/rails s -b 0.0.0.0
 ```
 
 ほかはRubyコードでの手順と同様です。Railsアプリで一時停止したい場所に `binding.break` を追記して、デバッグコンソールが起動したらopen chromeコマンドを実行、表示されるURL `devtools://...` へホスト上のChromeからアクセスしてデバッグできます。「binding.break + open chrome」相当の処理をRubyコードへ埋め込みできる `binding.break pre: "open chrome"` をつかうのも便利です。
+
+## docker-compose.ymlをつかって起動しているRailsアプリをホスト上のChromeからデバッグ
+
+次は、docker-compose.yml上で起動したRailsアプリをホスト上のChromeからデバッグするときの手順です。先ほどと同様にrails s用の3000番ポートとdebug gem用の45555番ポートを開ける設定でdocker-compose.ymlを書きます。さきほどと同様にDockerコンテナとしてCircleCIが提供しているcimg/rubyをつかうdocker-compose.ymlの例は次のようになります。
+
+```docker-compose.yml
+version: '3'
+
+services:
+  app:
+    image: cimg/ruby:3.1.2
+    ports:
+      - "45555:45555"
+      - "3000:3000"
+    volumes:
+      - .:/home/circleci/project
+    command: sleep infinity
+```
+
+docker compose execで接続する想定で、sleep infinity で起動しつづけています。docker-compose.yml をRailsアプリのrootフォルダに置いて、docker compose upコマンドで起動します。-dオプションをつけてバックグラウンドで起動するようにしています。
+
+(ホスト)
+
+```
+docker compose up -d
+docker compose exec app /bin/bash
+```
+
+Docker上でrails sを先ほどと同様に起動します。
+
+(Docker)
+
+```
+bundle install
+RUBY_DEBUG_PORT=45555 RUBY_DEBUG_HOST=0.0.0.0 bin/rails s -b 0.0.0.0
+```
+
+これでコンテナ内のrails serverにホストのChromeデベロッパーツールから接続してデバッグできるようになりました。
 
 # 参考文献
 
@@ -224,7 +262,10 @@ RUBY_DEBUG_PORT=45555 RUBY_DEBUG_HOST=0.0.0.0 bin/rails s -b 0.0.0.0
 - Introduction of Tools for providing rich user experience in debugger
   - https://www.slideshare.net/NaotoOno1/introduction-of-tools-for-providing-rich-user-experience-in-debugger
   - OnoさんのRubyKaigi2022での講演資料。Chromeデベロッパーツールをつかい方とその開発について話されています。
+- devcontainer for Ruby 3.1 and Rails 7.0
+  - https://github.com/saboyutaka/ruby31-rails70-devcontainer
+  - さぼさん作のVSCode上でdebug gemほかの環境をつくってRailsアプリを開発するテンプレートです
 
 # 謝辞
 
-本記事を書くにあたり、udzuraさん([@udzura](https://twitter.com/udzura))、笹田さん([@_ko1](https://twitter.com/_ko1))に助けていただきました。ありがとうございます。また、debug gemを熱心に開発してくださっている笹田さん([@_ko1](https://twitter.com/_ko1))、Onoさん([@ono_max7](https://twitter.com/ono_max7))、Stanさん([@_st0012](https://twitter.com/_st0012))に感謝します。
+本記事を書くにあたり、udzuraさん([@udzura](https://twitter.com/udzura))、笹田さん([@_ko1](https://twitter.com/_ko1))、さぼさん([@saboyutaka](https://twitter.com/saboyutaka))に助けていただきました。ありがとうございます。また、debug gemを熱心に開発してくださっている笹田さん([@_ko1](https://twitter.com/_ko1))、Onoさん([@ono_max7](https://twitter.com/ono_max7))、Stanさん([@_st0012](https://twitter.com/_st0012))に感謝します。
