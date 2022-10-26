@@ -73,6 +73,12 @@ end
 run App
 ```
 
+Rackアプリはcallメソッドを呼ばれたときに、次の3つの要素を持った配列を返す規約になっています。
+
+- HTTPステータスコードとなるIntegerオブジェクト
+- HTTPヘッダとなるHashオブジェクト
+- HTTPレスポンスボディとなる文字列を詰めたArrayオブジェクト
+
 rackupコマンドを実行してブラウザからアクセスすると、Hello world!がブラウザに表示されます。
 
 - $ gem install rack
