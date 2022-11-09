@@ -17,6 +17,7 @@ chapters:
   - ruby_and_rails_references
   - rack_middleware_and_rack
   - remaining_variables
+  - ruby_idioms
   - ruby_argument_literals
   - ruby_debugging
   - ruby_debug_gem
