@@ -1,5 +1,5 @@
 ---
-title: "[Ruby基礎] デバッグに便利な道具"
+title: "[Ruby基礎][Rails基礎] デバッグに便利な道具"
 ---
 
 # デバッグに便利な道具
@@ -341,7 +341,6 @@ end
 
 rails sなどを起動してアクセスし、標準出力を観察してみてください。traceメソッドに`:raise`を渡しているので、例外発生時にログが出力されます。たとえば`:line`を渡すと、たくさん表示されて実行速度がすごく遅くなるので注意です。
 
-
 ### 全てのイベントを観察
 
 traceメソッドにイベントを渡さないと、全てのイベントを監視します。ブロックが呼ばれる回数は増えるので、実行速度はかなり遅くなります。
@@ -378,6 +377,58 @@ Foo.new.bar
 [Event:line] example.rb:7 bar Foo
 [Event:return] example.rb:8 bar Foo
 ```
+
+## Active Support Instrumentation
+
+Railsアプリ実行時に発生するさまざまなイベントに対して処理を登録しておき、指定したイベントが発生したときに登録された処理を実行する機能です。
+
+たとえば、Active RecordにはDBへSQLクエリが発行されるたびに呼び出されるイベント`sql.active_record`が用意されています。 `ActiveSupport::Notifications.subscribe "sql.active_record" do end` を実行しておくことで、SQL実行イベントが発生するごとに渡したブロックが実行されます。
+
+次のコードは実行されたSQLを表示する例です。このコードをたとえば config/application.rbやconfig/initializers/*.rbへ書くことで、SQLを実行するごとに実行されたSQLをログへ書き出します。
+
+config/initializers/as_nortification.rb
+
+```ruby
+ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, finished, unique_id, payload|
+  Rails.logger.info payload[:sql]
+end
+```
+
+次のコードはページが表示されるときのControllerとActionを表示します。
+
+```ruby
+ActiveSupport::Notifications.subscribe("process_action.action_controller") do |name, start, finish, id, payload|
+  Rails.logger.info "=== #{payload[:controller]}##{payload[:action]}"
+end
+```
+
+次のコードはActiveRecordインスタンスがつくられたときにクラス名と作成されたインスタンス数を表示します。
+
+```ruby
+ActiveSupport::Notifications.subscribe "instantiation.active_record" do |name, started, finished, unique_id, payload|
+  Rails.logger.info "===#{payload[:class_name]}: #{payload[:record_count]}"
+end
+```
+
+ActiveSupport::Notifications.subscribeメソッドの基本形は次の通りです。
+
+```ruby
+ActiveSupport::Notifications.subscribe("event_name.catrgory") do |name, start, finish, id, payload|
+  name    # => イベント名
+  start   # => 開始時刻
+  finish  # => 終了時刻
+  id      # => イベントID
+  payload # => イベントごとの情報が格納されたHashオブジェクト
+end
+```
+
+payloadにはイベントごとの情報が格納されたHashオブジェクトが代入されています。監視可能なイベント一覧と、payloadに格納されている情報は、以下のRailsガイドのページにまとめられています。また、カスタムイベントも作成可能で、その手順も書かれています。
+
+- https://railsguides.jp/active_support_instrumentation.html
+
+この機能についてのより詳しい情報はapi.rubyonrails.orgでも読むことができます。
+
+- https://api.rubyonrails.org/classes/ActiveSupport/Notifications.html
 
 ## 参考資料
 
