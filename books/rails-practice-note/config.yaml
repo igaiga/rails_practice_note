@@ -22,5 +22,6 @@ chapters:
   - ruby_argument_literals
   - ruby_rails_debugging
   - ruby_debug_gem
+  - ruby_rails_vscode
   - writing_sponsors
 
