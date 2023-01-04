@@ -14,13 +14,13 @@ chapters:
   - ar_through_source
   - ar_sql_injection
   - ar_prefer_current_user_relations
-  - ruby_and_rails_references
+  - ruby_rails_references
   - rack_middleware_and_rack
   - remaining_variables
   - rails_idioms
   - ruby_idioms
   - ruby_argument_literals
-  - ruby_debugging
+  - ruby_rails_debugging
   - ruby_debug_gem
   - writing_sponsors
 
