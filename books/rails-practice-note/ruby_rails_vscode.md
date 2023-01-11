@@ -6,17 +6,183 @@ title: "[Ruby基礎][Rails基礎] Visual Studio CodeでRailsアプリを開発"
 
 Visual Studio Code(以降VSCode)での開発を便利にするノウハウを紹介していきます。
 
+## codeコマンド
+
+[VSCode CLI](https://code.visualstudio.com/docs/editor/command-line) をインストールすると、ターミナルでcodeコマンドがつかえるようになります。codeコマンドをつかうとVSCode組み込みではないターミナルからでもVSCodeを起動することができます。また、VSCode組み込みのターミナルをつかっているときはCommandキー(macOS)やCtrlキー(Windows)を押してパスをクリックすることでそのファイルを開くことができます。
+
+- `code .`
+  - 現在のフォルダを開いてVSCodeを起動します
+  - Railsアプリを開くときにRailsルートで実行するとRailsのコード群を選択しやすいです
+- `code path`
+  - 指定されたパスのファイルを開いてVSCodeを起動します
+  - 例: `code work/sample.rb`
+- `code -g path:line`
+  - 指定されたパスのファイルの指定行(line)を開いてVSCodeを起動します
+  - 例: `code -g work/sample.rb:5`
+
 ## debug gem
 
-次のページにデバッガのつかい方を書いています。
+debug gemとVSCodeのデバッグ機能を組み合わせてつかう方法です。debug gemについて詳しくは [debug gem](https://zenn.dev/igaiga/books/rails-practice-note/viewer/ruby_debug_gem) のページに書いています。
 
-[debug gem - 実行中のRubyコード、RailsコードをVSCodeを起動してデバッグ](https://zenn.dev/igaiga/books/rails-practice-note/viewer/ruby_debug_gem#%E5%AE%9F%E8%A1%8C%E4%B8%AD%E3%81%AEruby%E3%82%B3%E3%83%BC%E3%83%89%E3%80%81rails%E3%82%B3%E3%83%BC%E3%83%89%E3%82%92vscode%E3%82%92%E8%B5%B7%E5%8B%95%E3%81%97%E3%81%A6%E3%83%87%E3%83%90%E3%83%83%E3%82%B0)
+事前準備として、VSCodeへ[VSCode rdbg Ruby Debugger拡張](https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg)をインストールしておきます。
 
-## Docker
+また、ターミナルからVSCodeを起動するcodeコマンドがないときは、前の節を参考に [VSCode CLI](https://code.visualstudio.com/docs/editor/command-line) をインストールしておきます。
 
-次のページにDockerとdocker-composeのつかい方を書いています。
+### 実行中のRubyコード、RailsコードをVSCodeを起動してデバッグ
 
-[debug gem - VSCode上でdocker-compose.ymlをつかってDockerを起動してRailsアプリをデバッグ](https://zenn.dev/igaiga/books/rails-practice-note/viewer/ruby_debug_gem#vscode%E4%B8%8A%E3%81%A7docker-compose.yml%E3%82%92%E3%81%A4%E3%81%8B%E3%81%A3%E3%81%A6docker%E3%82%92%E8%B5%B7%E5%8B%95%E3%81%97%E3%81%A6rails%E3%82%A2%E3%83%97%E3%83%AA%E3%82%92%E3%83%87%E3%83%90%E3%83%83%E3%82%B0)
+debug gemはターミナルの標準入出力をつかってデバッグコンソールを起動しますが、VSCodeから接続してデバッグすることもできます。
+
+binding.breakで起動しているデバッグコンソールで`open vscode`コマンドを実行すると、VSCodeが起動してデバッグすることができます。`open chrome` のときと同様です。
+
+Chromeデベロッパーツールとの接続はTCP接続(URLで接続先を指定)でしたが、VSCodeとの接続はUNIX domain socket(ファイルパスで接続先を指定)で接続されます。
+
+### VSCodeで開いているRubyコード、Railsコードをデバッグ
+
+VSCodeのメニューから 実行 - デバッグの開始 を実行したときにdebug gemをつかう方法です。
+
+「デバッグの開始」時の動作を設定するファイルは `.vscode/launch.json` です。ファイルがなければ自動作成されます。たとえば、rails serverを起動するためには.vscode/launch.jsonを次のように編集します。各設定の意味は後述します。
+
+- .vscode/launch.json
+
+```.vscode/launch.json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Rails",
+      "type": "rdbg",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "script": "bin/rails server",
+      "args": [],
+      "askParameters": true,
+      "useBundler": true,
+    }
+  ]
+}
+```
+
+VSCodeのメニューから 実行 - デバッグの開始 を実行すると、ダイアログでこれから実行するコマンドが表示されるので確認して実行します。
+
+![](/images/rails_practice_note/ruby_debug_gem/vscode_run_command.png)
+
+VSCodeに表示しているソースコードの行番号の左側をクリックするとブレークポイントが設定できます。ブラウザからRailsアプリへアクセスして、ブレークポイントまで処理が進むと一時停止します。メニューから 表示 - デバッグコンソール を実行すると、下部にパネルが表示され、debug gem コマンドを実行できます。
+
+![](/images/rails_practice_note/ruby_debug_gem/vscode_debug_console.png)
+
+実際に実行されていてるコマンドはたとえば次のようになっています。
+
+```
+rdbg --command --open --stop-at-load --sock-path=/var/folders/tv/b9rpcj011w110tjd0kv0_8h80000gn/T/ruby-debug-sock-501/ruby-debug-igaiga-18173 -- bundle exec ruby bin/rails server
+```
+
+launch.jsonの各設定の意味は次の通りです。
+
+- `"name": "Debug Rails"` この構成の名前
+- `"type": "rdbg"` この構成の種類(つかう拡張)
+- `"request": "launch"` 「デバッグの開始」時の設定
+- `"cwd": "${workspaceRoot}"` カレントディレクトリ設定
+- `"script": "bin/rails server"` 実行するコマンド
+- `"args": []` コマンドに渡すオプション
+- `"askParameters": true` 実行前にダイアログで実行コマンドを確認
+- `"useBundler": true` bundle exec を付与
+
+また、環境変数を指定したいときは以下のようにconfigurationsに追加します。
+
+```.vscode/launch.json
+"configurations": [
+  {
+    #...
+    "env": {
+      "WEB_CONCURRENCY": 0
+    }
+  }
+]
+```
+
+サンプルコード: https://github.com/igaiga/rails704_ruby312_docker
+
+## VSCode上でdocker-compose.ymlをつかってDockerを起動してRailsアプリをデバッグ
+
+VSCode上でDockerコンテナを起動してデバッグする方法です。[VSCode rdbg Ruby Debugger拡張](https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg)に加えて、事前に [Dev Containers拡張](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) をインストールしておきます。
+
+VSCodeの左下アイコンをクリックして"Open Folder in Container (Remote-Containers)" コマンドを実行しますが、そのときの動作を設定するファイル `.devcontainer/devcontainer.json` を次の内容で置いておきます。
+
+- .devcontainer/devcontainer.json
+
+```.devcontainer/devcontainer.json
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/ruby
+{
+  "name": "devcontainer settings for cimg/ruby",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "app",
+  "runServices": ["app"],
+  "workspaceFolder": "/home/circleci/project",
+  "remoteUser": "circleci",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+      ],
+      "settings": {
+      }
+    }
+  }
+}
+```
+
+name, service, runServices, workspaceFolder, remoteUser などはdocker-compose.ymlの設定に合わせて書いておきます。
+
+docker-compose.ymlもRailsルートフォルダへ置いておきます。
+
+- docker-compose.yml
+
+```docker-compose.yml
+version: '3'
+
+services:
+  app:
+    image: cimg/ruby:3.1.2
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/home/circleci/project
+    command: sleep infinity
+```
+
+VSCodeの左下アイコンをクリックして"Open Folder in Container (Remote-Containers)" コマンドを実行して、 `.devcontainer/devcontainer.json` と `docker-compose.yml` を配置したRailsアプリのフォルダを選択します。
+
+VSCodeメニューの 表示 - ターミナル を実行すると、下部にパネルが表示され、コンテナ内で起動したターミナルとして利用できます。`docker compose exec app /bin/bash` コマンドを実行したときのターミナル相当の動作です。
+
+ソースコードを開いてVSCodeからブレークポイントを設定します。
+
+実行 - デバッグの開始 を選んでデバッガとrails serverを起動しますが、ホストからコンテナ上で起動するrails serverへ接続するために `-b 0.0.0.0` オプションを追加したいので、launch.jsonの`args` 設定を `"args": ["-b 0.0.0.0"]` へ変更します。launch.json全体は次のようになります。
+
+- .vscode/launch.json
+
+```.vscode/launch.json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Rails",
+      "type": "rdbg",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "script": "bin/rails server",
+      "args": ["-b 0.0.0.0"],
+      "askParameters": true,
+      "useBundler": true,
+    }
+  ]
+}
+```
+
+実行されるコマンド例は `rdbg --command --open --stop-at-load --sock-path=/tmp/ruby-debug-sock-3434/ruby-debug-ruby-debug-727 -- bundle exec ruby bin/rails server -b 0.0.0.0` となっていて、UNIX domain socketをつかってdebug gemとVSCodeが接続しています。また、VSCodeから事前に必要な作業が提案されるので、必要に応じてrdbg拡張のコンテナへのインストールやbundle installなどの作業を実行します。
+
+ブラウザから http://localhost:3000 以下へアクセスして、ブレークポイントを設定した場所まで処理が進むと一時停止します。
+
+サンプルコード: https://github.com/igaiga/rails704_ruby312_docker
 
 ## RuboCop
 
@@ -32,18 +198,4 @@ vscode-ruby-light拡張を有効にして、.rubocop.ymlがあり、rubocopコ�
 
 ![](/images/rails_practice_note/vscode/vscode_rubocop2.png)
 ![](/images/rails_practice_note/vscode/vscode_rubocop3.png)
-
-## codeコマンド
-
-[VSCode CLI](https://code.visualstudio.com/docs/editor/command-line) をインストールすると、ターミナルでcodeコマンドがつかえるようになります。codeコマンドをつかうとVSCode組み込みではないターミナルからでもVSCodeを起動することができます。また、VSCode組み込みのターミナルをつかっているときはCommandキー(macOS)やCtrlキー(Windows)を押してパスをクリックすることでそのファイルを開くことができます。
-
-- `code .`
-  - 現在のフォルダを開いてVSCodeを起動します
-  - Railsアプリを開くときにRailsルートで実行するとRailsのコード群を選択しやすいです
-- `code path`
-  - 指定されたパスのファイルを開いてVSCodeを起動します
-  - 例: `code work/sample.rb`
-- `code -g path:line`
-  - 指定されたパスのファイルの指定行(line)を開いてVSCodeを起動します
-  - 例: `code -g work/sample.rb:5`
 
