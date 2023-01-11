@@ -26,7 +26,7 @@ debug gemとVSCodeのデバッグ機能を組み合わせてつかう方法で�
 
 事前準備として、VSCodeへ[VSCode rdbg Ruby Debugger拡張](https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg)をインストールしておきます。
 
-また、ターミナルからVSCodeを起動するcodeコマンドがないときは、前の節を参考に [VSCode CLI](https://code.visualstudio.com/docs/editor/command-line) をインストールしておきます。
+また、ターミナルからVSCodeを起動するcodeコマンドがないときは、前述の節を参考に [VSCode CLI](https://code.visualstudio.com/docs/editor/command-line) をインストールしておきます。
 
 ### 実行中のRubyコード、RailsコードをVSCodeを起動してデバッグ
 
@@ -36,7 +36,7 @@ binding.breakで起動しているデバッグコンソールで`open vscode`コ
 
 Chromeデベロッパーツールとの接続はTCP接続(URLで接続先を指定)でしたが、VSCodeとの接続はUNIX domain socket(ファイルパスで接続先を指定)で接続されます。
 
-### VSCodeで開いているRubyコード、Railsコードをデバッグ
+### Rubyコード、Railsコードをデバッグ
 
 VSCodeのメニューから 実行 - デバッグの開始 を実行したときにdebug gemをつかう方法です。
 
@@ -102,9 +102,9 @@ launch.jsonの各設定の意味は次の通りです。
 
 サンプルコード: https://github.com/igaiga/rails704_ruby312_docker
 
-## VSCode上でdocker-compose.ymlをつかってDockerを起動してRailsアプリをデバッグ
+## VSCode上でdocker-compose.ymlをつかってDockerコンテナを起動
 
-VSCode上でDockerコンテナを起動してデバッグする方法です。[VSCode rdbg Ruby Debugger拡張](https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg)に加えて、事前に [Dev Containers拡張](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) をインストールしておきます。
+VSCode上でDockerコンテナを起動して開発する方法です。事前に [Dev Containers拡張](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) をインストールしておきます。
 
 VSCodeの左下アイコンをクリックして"Open Folder in Container (Remote-Containers)" コマンドを実行しますが、そのときの動作を設定するファイル `.devcontainer/devcontainer.json` を次の内容で置いておきます。
 
@@ -154,9 +154,15 @@ VSCodeの左下アイコンをクリックして"Open Folder in Container (Remot
 
 VSCodeメニューの 表示 - ターミナル を実行すると、下部にパネルが表示され、コンテナ内で起動したターミナルとして利用できます。`docker compose exec app /bin/bash` コマンドを実行したときのターミナル相当の動作です。
 
+rails serverを起動するときは `-b 0.0.0.0` オプションを追加してください。ホスト上のブラウザからコンテナ上で起動するrails serverへ接続するための設定です。
+
+## VSCode上でDockerコンテナを起動してRailsアプリをデバッグ
+
+前述の「VSCode上でdocker-compose.ymlをつかってDockerコンテナを起動」節の環境でデバッグ機能をつかうときの設定方法です。
+
 ソースコードを開いてVSCodeからブレークポイントを設定します。
 
-実行 - デバッグの開始 を選んでデバッガとrails serverを起動しますが、ホストからコンテナ上で起動するrails serverへ接続するために `-b 0.0.0.0` オプションを追加したいので、launch.jsonの`args` 設定を `"args": ["-b 0.0.0.0"]` へ変更します。launch.json全体は次のようになります。
+実行 - デバッグの開始 を選んでデバッガとrails serverを起動しますが、ホストからコンテナ上で起動するrails serverへ接続するために `-b 0.0.0.0` オプションを追加したいので、前述「Rubyコード、Railsコードをデバッグ」で書いたlaunch.jsonの`args` 設定を `"args": ["-b 0.0.0.0"]` へ変更します。launch.json全体は次のようになります。
 
 - .vscode/launch.json
 
