@@ -64,11 +64,11 @@ VSCodeのメニューから 実行 - デバッグの開始 を実行したとき
 
 VSCodeのメニューから 実行 - デバッグの開始 を実行すると、ダイアログでこれから実行するコマンドが表示されるので確認して実行します。
 
-![](/images/rails_practice_note/ruby_debug_gem/vscode_run_command.png)
+![](/images/rails_practice_note/vscode/vscode_run_command.png)
 
 VSCodeに表示しているソースコードの行番号の左側をクリックするとブレークポイントが設定できます。ブラウザからRailsアプリへアクセスして、ブレークポイントまで処理が進むと一時停止します。メニューから 表示 - デバッグコンソール を実行すると、下部にパネルが表示され、debug gem コマンドを実行できます。
 
-![](/images/rails_practice_note/ruby_debug_gem/vscode_debug_console.png)
+![](/images/rails_practice_note/vscode/vscode_debug_console.png)
 
 実際に実行されていてるコマンドはたとえば次のようになっています。
 
