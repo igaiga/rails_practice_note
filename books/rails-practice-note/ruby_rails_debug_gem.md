@@ -1,5 +1,5 @@
 ---
-title: "[Ruby基礎] debug gem"
+title: "[Ruby基礎][Rails基礎] debug gem"
 ---
 
 # debug gem
