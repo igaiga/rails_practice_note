@@ -242,3 +242,32 @@ p result #=> [{"A"=>"a"}, {"B"=>"b"}]
 ```
 
 Numbered parametersは、Ruby2.7.0で導入された比較的新しい記法です。
+
+## Frozen String Literal
+
+コードの1行目に `# frozen_string_literal: true` と書くと、そのファイル中に書かれたStringリテラル全てをイミュータブル(変更不可)にします。各Stringオブジェクトにfreezeメソッドを呼んだことと同等になります。
+
+```ruby
+# frozen_string_literal: true
+
+str = "abc"
+str.frozen? #=> true
+str.upcase! #=> can't modify frozen String: "abc" (FrozenError)
+```
+
+このファイル中で変更可能なStringオブジェクトを書きたいときは、たとえば `String.new` をつかいます。
+
+```ruby
+# frozen_string_literal: true
+
+str = String.new("abc")
+str.frozen? #=> false
+str.upcase!
+p str #=> "ABC"
+```
+
+`String.new` のほかには、単項+をつかって `+"abc"`と書く方法や、Object#dupメソッドがfrozenではないオブジェクトを複製して返すことをつかって `"abc".dup` と書く方法もあります。
+
+frozenなオブジェクトにしておくと、実行時の高速化で有利になったり、Ractorの共有可能オブジェクトとしてつかえるなどのメリットを得ることができるため、可能ならば最初からfrozen_string_literal行を書いて置くのが良いでしょう。既存のファイルにfrozen_string_literal行を足すときは、ソースコードに書かれた各Stringオブジェクトに対して変更を加えていないことを確認する必要があります。
+
+また、このようにファイル先頭に書いて動作を指示する特別なコメント行のことをマジックコメントと呼びます。他には `# coding: utf-8` とファイルの文字コードエンコーディングを指定するマジックコメントもあります。ただし、codingマジックコメントのデフォルトはUTF-8なので、UTF-8のファイルをつかっているときには省略可能です。
