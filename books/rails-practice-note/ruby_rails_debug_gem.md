@@ -4,7 +4,7 @@ title: "[Ruby基礎][Rails基礎] debug gem"
 
 # debug gem
 
-debug gemは2021年に公開されたRuby用のデバッガです。gemをインストールすることでRuby2.6以降で利用可能です。Ruby3.1以降ではデフォルトでRubyに添付されています。また、Rails7.0以降でデフォルトで入っているデバッガとなっています。
+[debug gem](https://github.com/ruby/debug)は2021年に公開されたRuby用のデバッガです。gemをインストールすることでRuby2.6以降で利用可能です。Ruby3.1以降ではデフォルトでRubyに添付されています。また、Rails7.0以降でデフォルトで入っているデバッガとなっています。
 
 同様の機能を持つツールにbyebug gemがありますが、debug gemはRubyに標準添付されていること、Railsにデフォルトで入っているデバッガであること、開発が活発であること、などの理由からRubyデバッガの第一候補の地位を築いています。
 
@@ -116,6 +116,14 @@ trace コマンドを指定しておくと、以降の処理で指定したイ�
 - trace exception
 
 例外が投げられたときにその情報を表示します。通常、rescueされた例外に気づくことはありませんが、trace exceptionコマンドを有効にしておくことで、どんな例外が投げられてrescueされたのかを観察することができます。また、 catch <ExceptonName> コマンドをつかうと、ExceptonName例外が投げられたときに一時停止してデバッグコンソールを起動できます。
+
+応用例として、`binding.break do: "trace exception"` と `binding.break do: "trace off exception"` で処理を囲むと、その間で投げられた例外が表示されます。binding.break do はそこでコマンド入力待ちにならずに、do以降のコマンドを実行してプログラム実行を再開するため、入力で待つことなく高速に試行できます。
+
+```
+binding.break do: "trace exception"
+...処理... (この間に投げられた例外が表示される)
+binding.break do: "trace off exception"
+```
 
 ### watchコマンド
 
