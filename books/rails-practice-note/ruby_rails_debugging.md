@@ -12,6 +12,36 @@ binding.irbはgemをインストールせずに実行でき、またrequireを�
 
 また、ステップ実行や変数情報の取得などより多くの機能を持ったdebug gemもRubyの標準添付ライブラリとして提供されています。新しいバージョンのirbとdebug gemをつかうと、binding.irbで一時停止した状態からdebugコマンドなどを実行することでdebug gemをつかうこともできます。debug gemについては[別のページ](../viewer/ruby_debug_gem)で説明しているのでそちらも参照してください。
 
+## g gem
+
+[g gem](https://github.com/jugyo/g) は通知サービスへ文字列を出力できるgemです。pメソッドの出力先を通知に変えたgメソッドをつかうことができます。
+
+![g gem](/images/rails_practice_note/debugging/g_hi.png)
+
+g gemをインストールして、あわせて terminal-notifier gem (または ruby_gntp gem) をインストールします。
+
+$ gem install g
+$ gem install terminal-notifier
+
+コードでは `require "g"` を書くとgメソッドがつかえるようになります。次のコードは文字列"hi"を通知に表示します。
+
+```ruby
+require "g"
+
+g "hi"
+```
+
+RailsアプリではGemfileにg gem, terminal-notifier gemを書けばgメソッドが利用可能になります。
+
+```Gemfile
+group :development, :test do
+  gem "g"
+  gem "terminal-notifier"
+end
+```
+
+以下はmacOSでつかうときの注意点です。通知が「1件の通知」といった形で表示されるときは、システム設定 - 通知 - terminal-notifier を選んで、通知の設定をしてみてください。プレビューの表示を「常に表示」に変更することで、gメソッドへ渡した引数が通知欄に表示されます。
+
 ## methodメソッドとsource_locationメソッド
 
 メソッドが定義されているソースコードのパスを調べるときには、methodメソッドとsource_locationメソッドを組み合わせてつかいます。
@@ -394,19 +424,19 @@ ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, fi
 end
 ```
 
-次のコードはページが表示されるときのControllerとActionを表示します。
-
-```ruby
-ActiveSupport::Notifications.subscribe("process_action.action_controller") do |name, start, finish, id, payload|
-  Rails.logger.info "=== #{payload[:controller]}##{payload[:action]}"
-end
-```
-
 次のコードはActiveRecordインスタンスがつくられたときにクラス名と作成されたインスタンス数を表示します。
 
 ```ruby
 ActiveSupport::Notifications.subscribe "instantiation.active_record" do |name, started, finished, unique_id, payload|
   Rails.logger.info "===#{payload[:class_name]}: #{payload[:record_count]}"
+end
+```
+
+次のコードはページが表示されるときのControllerとActionを表示します。ログへ出力する代わりに、前述のg gemをつかって通知欄へ出力するのも便利です。
+
+```ruby
+ActiveSupport::Notifications.subscribe("process_action.action_controller") do |name, start, finish, id, payload|
+  Rails.logger.info "=== #{payload[:controller]}##{payload[:action]}"
 end
 ```
 
