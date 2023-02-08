@@ -72,17 +72,18 @@ $ ruby debug_sample.rb
 
 ## デバッグコンソールのつかい方
 
-デバッグコンソール上ではdebug gemが提供するコマンドのほか、irbのようにRubyのコードを実行することもできます。`next` or `n` コマンドで1行ずつステップ実行、`continue` or `c` コマンドで一時停止を解除してプログラムを再開します。`help`コマンドでデバッグコンソール上で利用できるコマンドの説明が表示されます。
+デバッグコンソール上でつかえる基本的なコマンドを紹介していきます。
 
-コマンドの一覧や、そのほかのつかい方はdebug gemのGitHubページなどを参考にしてください。
+### 基本的なコマンド
 
-- [debug gem GitHub](https://github.com/ruby/debug) 
-- [コマンド一覧](https://github.com/ruby/debug#debug-command-on-the-debug-console)
-- [ruby/debug cheatsheet](https://st0012.dev/ruby-debug-cheatsheet)
+次のコマンドを知っておくだけでirbと同程度にdebug gemをつかうことができます。デバッグコンソール上ではdebug gemが提供するコマンドのほか、irbと同じくRubyコードを実行することもできます。
 
-## デバッグコンソールの便利なコマンド
-
-デバッグコンソールでつかえる便利なコマンドを紹介します。
+- next or n
+  - 1行ずつステップ実行
+- continue or c
+  - 一時停止を解除してプログラムを再開
+- help or ?
+  - 利用できるコマンドを表示
 
 ### info コマンド, ls コマンド
 
@@ -130,6 +131,14 @@ binding.break do: "trace off exception"
 - watch <@instance_variable_name>
 
 watchコマンドへインスタンス変数名を指定すると、(selfが持っている)指定されたインスタンス変数が変更されたときに、一時停止してデバッグコンソールを起動できます。
+
+### コマンドの調べ方
+
+コマンドの一覧や、そのほかのつかい方はdebug gemのGitHubページなどを参考にしてください。
+
+- [debug gem GitHub](https://github.com/ruby/debug)
+  - [debug gem GitHub コマンド一覧](https://github.com/ruby/debug#debug-command-on-the-debug-console)
+- [ruby/debug cheatsheet](https://st0012.dev/ruby-debug-cheatsheet)
 
 ## Chromeデベロッパーツールをつかってデバッグ
 
