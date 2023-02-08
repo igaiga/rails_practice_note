@@ -132,6 +132,18 @@ binding.break do: "trace off exception"
 
 watchコマンドへインスタンス変数名を指定すると、(selfが持っている)指定されたインスタンス変数が変更されたときに、一時停止してデバッグコンソールを起動できます。
 
+### step backコマンドとrecord onコマンド
+
+nextコマンドで1行ずつコードを実行することができますが、step backコマンドは逆に1行ずつ行ったコード実行を戻っていく機能です。ただし、事前にrecord onコマンドを実行しておく必要があり、step backでさかのぼることができるのはrecord onコマンドを実行した時点までです。
+
+record onコマンドはデバッグコンソールで実行する方法のほか、前に出てきた `binding.break do:` をつかってコード中に書くのも便利です。
+
+```ruby
+binding.break do: "record on" # ここまで戻ることが可能
+# ...
+binding.break # ここでデバッグコンソール起動、step backコマンドで1行戻る
+```
+
 ### コマンドの調べ方
 
 コマンドの一覧や、そのほかのつかい方はdebug gemのGitHubページなどを参考にしてください。
