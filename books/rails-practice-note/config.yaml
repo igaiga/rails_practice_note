@@ -24,5 +24,6 @@ chapters:
   - ruby_rails_debugging
   - ruby_rails_debug_gem
   - ruby_rails_vscode
+  - rails_graphql_workshop
   - writing_sponsors
 
