@@ -9,9 +9,8 @@ chapters:
   - ar_merge
   - ar_select_pluck
   - ar_group_having_count
-  - ar_irregular_foreign_key
+  - ar_association_options
   - ar_inverse_of
-  - ar_through_source
   - ar_transaction_lock
   - ar_sql_injection
   - ar_prefer_current_user_relations
