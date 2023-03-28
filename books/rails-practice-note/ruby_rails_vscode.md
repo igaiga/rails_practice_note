@@ -205,3 +205,8 @@ vscode-ruby-light拡張を有効にして、.rubocop.ymlがあり、rubocopコ�
 ![](/images/rails_practice_note/vscode/vscode_rubocop2.png)
 ![](/images/rails_practice_note/vscode/vscode_rubocop3.png)
 
+## 参考資料
+
+- Ruby in Visual Studio Code
+  - https://code.visualstudio.com/docs/languages/ruby
+  - VSCodeへRubyLSP, VSCode rdbg Ruby Debugger の各拡張をセットアップするドキュメント
