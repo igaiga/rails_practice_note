@@ -8,7 +8,7 @@ SQLで同じ値のデータ群をまとめるための道具としてgroup byが
 
 ## groupメソッド
 
-Bookモデルのtitleカラムでgroup byでまとめるには `Book.group(:title)` と書きます。
+Bookモデルのtitleカラムでgroup byでまとめるには `Book.group(:title)` と書きます。次のコードは、同じtitleカラムのレコードは1つだけ取得されるようなActiveRecord Relationを取得しています。
 
 ```ruby
 Book.group(:title)
@@ -31,7 +31,7 @@ Book.group(:title)
 ...
 ```
 
-booksテーブルの全カラムを取得する必要がないときは、pluckメソッドやselectメソッドで絞ることもできます。2つのメソッドの違いは「pluckとselectの違い」を参照してください。
+booksテーブルの全カラムを取得する必要がないときは、pluckメソッドやselectメソッドで絞ることもできます。2つのメソッドの違いは「pluckとselectの違い」を参照してください。次のコードはgroup byをつかってbooksテーブルの全titleを重複なく取得しています。
 
 ```ruby
 Book.group(:title).pluck(:title)
