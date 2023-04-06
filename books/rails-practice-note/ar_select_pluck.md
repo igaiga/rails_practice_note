@@ -6,9 +6,11 @@ title: "[ActiveRecord] selectとpluckの違い"
 
 ActiveRecordのselectメソッドとpluckメソッドは次のように動きます。
 
-- selectはActiveRecord::Relationを返し、to_aメソッドなどでSQLが発行され、ActiveRecordオブジェクトの配列が取れる
 - pluckは呼び出すとすぐにSQL発行し、結果の値の配列が取れる
-- `select(Arel.sql("... as foo"))`を実行すると、取得したActiveRecordオブジェクトにSQLの結果を取得するfooメソッド(attributes)がつくられる
+- selectはActiveRecord::Relationを返し、to_aメソッドなどでSQLが発行され、ActiveRecordオブジェクトの配列が取れる
+- `select(Arel.sql("... as foo"))` を実行すると、取得したActiveRecordオブジェクトにSQLの結果を取得するfooメソッド(attributes)がつくられる
+
+pluckの結果はActiveRecordオブジェクトではなく値になるため、結果レコード数が多いときにつかうとメモリ使用量を抑えることができます。結果レコード数がおおよそ1000レコードを超えてくると、ActiveRecordオブジェクト群をつくるためにメモリをたくさん確保してパフォーマンスが悪くなりはじめることがあります。そのケースではpluckをつかうとメモリ消費量を抑えて高速に動かすことができます。ただし、ActiveRecordオブジェクトの機能がつかえない制限があります。StringやIntegerなどの値と、ActiveRecordオブジェクトとのメモリ使用量を比較すると、ActiveRecordオブジェクトが数倍から数百倍大きくなります。
 
 どちらのメソッドもattributes(カラム)のシンボルを渡したり、SQLの一部を書くこともできます。
 
