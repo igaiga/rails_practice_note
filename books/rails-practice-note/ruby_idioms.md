@@ -201,6 +201,91 @@ p x&.upcase #=> nil
 123.try(:upcase) #=> nil
 ```
 
+## super
+
+superはメソッド探索順で次の順序である同名メソッドを呼び出します。
+
+```ruby
+class A
+  def foo(a, b)
+    p "#{a}, #{b}"
+  end
+end
+
+class B < A
+  def foo(x, y)
+    super # A#fooメソッドを引数x,yを渡して呼び出し
+  end
+end
+
+B.new.foo(1,2) #=> "1, 2"
+```
+
+superが呼ばれると、メソッド探索順で次の順序である同名メソッド(以降、探索次順メソッド)が呼び出されます。つまり、Bクラスのfooメソッド中でsuperが呼ばれると、探索次順メソッドA#fooメソッドを呼び出します。
+
+`super` と書くと、現在のメソッドへ渡ってきている引数を、自動的に探索次順メソッドへ渡します。`super(x)` のように引数を明示することもできます。引数を渡したくないときは `super()` と書きます。
+
+また、superの戻り値は探索次順メソッドが返したオブジェクトとなります。
+
+必ず親クラスのメソッドが探索次順メソッドとして選ばれるわけではなく、たとえば、includeされたモジュールに同名メソッドがあれば、それが探索次順メソッドになります。
+
+その場所でsuperを呼んだときに、どのクラスのメソッドが呼ばれるかを調べるにはMethod#super_methodメソッドをつかって `method(__method__).super_method` と書けます。 `__method__` はメソッド名をシンボルで取得するメソッドで、 `method(__method__)` でそのメソッド自身のMethodオブジェクトを取得できます。
+
+```ruby
+class A
+  def foo
+  end
+end
+
+class B < A
+  def foo
+    p method(__method__).super_method
+  end
+end
+
+B.new.foo #=> #<Method: A#foo() example.rb:2>
+```
+
+また、メソッド探索順の調べ方はたとえば `B.ancestors` のように、Module#ancestorsメソッドで調べることができます。
+
+```ruby
+class A
+  def foo
+  end
+end
+
+class B < A
+  def foo
+  end
+end
+
+p B.ancestors #=> [B, A, Object, Kernel, BasicObject]
+```
+
+superがよくつかわれるケースはinitializeメソッドです。継承したときにinitializeメソッド中にsuperを書かないと、親クラス群のinitializeメソッドが呼ばれないので、初期化が不十分になることがあります。initializeメソッドを実装するときは、原則としてsuperを呼び出すのが良いでしょう。（initializeメソッドを実装しないケースでは、探索次順のinitializeメソッドが呼ばれるので問題ないです。）
+
+```ruby
+class A
+  def initialize(x, y)
+    @x = x
+    @y = y
+  end
+end
+
+class B < A
+  def initialize(x,y)
+    # ... 自分のクラスの初期化処理(親クラスより前にやる)
+    super
+    # ... 自分のクラスの初期化処理(親クラスより後にやる)
+  end
+  def x
+    @x
+  end
+end
+
+p B.new(1,2).x #=> 1
+```
+
 ## Numbered parameters
 
 Numbered parametersは、ブロック引数(変数)を省略して書ける記法です。
