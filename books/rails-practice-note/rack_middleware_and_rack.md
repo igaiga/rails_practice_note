@@ -230,7 +230,7 @@ Rackミドルウェアは実行される順番が大事になることもある�
   - 新規ミドルウェアnew_middlewareを既存ミドルウェアexisting_middlewareの直後に追加
 - config.middleware.move_before(target_middleware, moving_middleware)
   - 既存ミドルウェアmoving_middlewareを既存ミドルウェアtarget_middlewareの直前へ移動
-- config.middleware.move_after(existing_middleware, new_middleware)
+- config.middleware.move_after(target_middleware, moving_middleware)
   - 既存ミドルウェアmoving_middlewareを既存ミドルウェアtarget_middlewareの直後へ移動
 - config.middleware.swap(out_middleware, in_middleware)
   - 既存ミドルウェアout_middlewareを外して、新規ミドルウェアin_middlewareを追加
