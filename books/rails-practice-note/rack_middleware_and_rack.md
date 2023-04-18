@@ -220,6 +220,27 @@ use Hello
 
 `Rails.application.config.middleware.use クラス名` で指定したクラスをRailsアプリへ組み込み、Rackミドルウェアとして利用することができます。
 
+Rackミドルウェアは実行される順番が大事になることもあるので、次のように指定したところへ差し込むメソッドも用意されています。
+
+- config.middleware.use(new_middleware)
+  - 末尾に新規ミドルウェアnew_middlewareを追加
+- config.middleware.insert_before(existing_middleware, new_middleware)
+  - 新規ミドルウェアnew_middlewareを既存ミドルウェアexisting_middlewareの直前に追加
+- config.middleware.insert_after(existing_middleware, new_middleware)
+  - 新規ミドルウェアnew_middlewareを既存ミドルウェアexisting_middlewareの直後に追加
+- config.middleware.move_before(target_middleware, moving_middleware)
+  - 既存ミドルウェアmoving_middlewareを既存ミドルウェアtarget_middlewareの直前へ移動
+- config.middleware.move_after(existing_middleware, new_middleware)
+  - 既存ミドルウェアmoving_middlewareを既存ミドルウェアtarget_middlewareの直後へ移動
+- config.middleware.swap(out_middleware, in_middleware)
+  - 既存ミドルウェアout_middlewareを外して、新規ミドルウェアin_middlewareを追加
+- config.middleware.delete(middleware)
+  - 既存ミドルウェアmiddlewareを削除
+
+これらのメソッドの説明はRails APIのページが参考になります。
+
+https://api.rubyonrails.org/classes/Rails/Configuration/MiddlewareStackProxy.html
+
 ## RailsのRackミドルウェアをつかったエラーハンドリング
 
 Railsアプリにはエラーハンドリングを行うRack Middlware "ActionDispatch::ShowExceptions"（actionpack/lib/action_dispatch/middleware/show_exceptions.rb）がデフォルトで組み込まれています。
@@ -254,6 +275,8 @@ $ rails s -e production
 
 - Rails Guide 「RailsとRack」
     - https://railsguides.jp/rails_on_rack.html
+- Rails API Rails::Configuration::MiddlewareStackProxy(Rackミドルウェアを追加するメソッド群)
+    - https://api.rubyonrails.org/classes/Rails/Configuration/MiddlewareStackProxy.html
 - パーフェクトRails 増補改訂版
     - 8-3-1 エラーハンドリング
     - 8-3-2 Rack Middlewareを利用したエラーハンドリング
