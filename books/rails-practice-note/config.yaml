@@ -25,5 +25,6 @@ chapters:
   - ruby_rails_vscode
   - rails_rspec_workshop
   - rails_graphql_workshop
+  - rails_rubocop_custom_cop
   - writing_sponsors
 
