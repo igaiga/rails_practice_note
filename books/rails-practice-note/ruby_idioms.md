@@ -356,3 +356,22 @@ p str #=> "ABC"
 frozenなオブジェクトにしておくと、実行時の高速化で有利になったり、Ractorの共有可能オブジェクトとしてつかえるなどのメリットを得ることができるため、可能ならば最初からfrozen_string_literal行を書いて置くのが良いでしょう。既存のファイルにfrozen_string_literal行を足すときは、ソースコードに書かれた各Stringオブジェクトに対して変更を加えていないことを確認する必要があります。
 
 また、このようにファイル先頭に書いて動作を指示する特別なコメント行のことをマジックコメントと呼びます。他には `# coding: utf-8` とファイルの文字コードエンコーディングを指定するマジックコメントもあります。ただし、codingマジックコメントのデフォルトはUTF-8なので、UTF-8のファイルをつかっているときには省略可能です。
+
+## JSON.parseメソッド symbolize_namesオプション
+
+JSON形式のデータをHashへ変換するJSON.parseメソッドがあります。このメソッドで変換すると結果のHashのキーは文字列になりますが、symbolize_namesオプションをtrueにして変換するとHashのキーをシンボルにすることができます。
+
+```ruby
+require "json"
+
+json = {a: 1, b: 2}.to_json
+#=> "{\"a\":1,\"b\":2}"
+
+JSON.parse(json)
+#=> {"a"=>1, "b"=>2}
+
+JSON.parse(json, symbolize_names: true)
+#=> {:a=>1, :b=>2}
+```
+
+https://docs.ruby-lang.org/ja/latest/method/JSON/m/parse.html
