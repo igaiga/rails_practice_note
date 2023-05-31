@@ -15,6 +15,7 @@ chapters:
   - ar_sql_injection
   - ar_prefer_current_user_relations
   - ar_delegated_type
+  - ar_processing_across_multiple_models
   - ruby_rails_references
   - rack_middleware_and_rack
   - remaining_variables
