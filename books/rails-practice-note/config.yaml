@@ -13,7 +13,6 @@ chapters:
   - ar_inverse_of
   - ar_transaction_lock
   - ar_sql_injection
-  - ar_prefer_current_user_relations
   - ar_delegated_type
   - ar_processing_across_multiple_models
   - ruby_rails_references
