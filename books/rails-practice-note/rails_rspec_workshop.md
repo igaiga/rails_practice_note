@@ -789,16 +789,16 @@ FactoryBot.define do
   factory :book do
     title { "RubyBook" }
     author { "matz" }
-  end
 
-  # 追加
-  trait :with_variations do
-    after(:create) do |book|
-      book.variations.create!(kind: "paper book")
+    # 追加
+    trait :with_variations do
+      after(:create) do |book|
+        book.variations.create!(kind: "paper book")
+      end
+      # （動作未確認）上のafterメソッドの代わりに、関連先のFactoryBotがあればこう書ける。
+      # こちらだとFactoryBot.build時に関連先もbuildで作成できるかも。
+      # FactoryBot.create_list(:variations, count, book: book)
     end
-    # （動作未確認）上のafterメソッドの代わりに、関連先のFactoryBotがあればこう書ける。
-    # こちらだとFactoryBot.build時に関連先もbuildで作成できるかも。
-    # FactoryBot.create_list(:variations, count, book: book)
   end
 end
 ```
