@@ -73,7 +73,17 @@ source_locationメソッドでnilが返ってきたときは、Rubyで定義さ�
 
 Methodオブジェクトには他にもownerメソッド(メソッドが定義されているクラスまたはモジュールを返す)、original_nameメソッド(aliasがつかわれているときにalias先のメソッド名を返す)、super_methodメソッド(superを呼んだときに呼び出されるメソッドオブジェクトを返す)など便利なメソッドが用意されています。また、メソッドの継承ツリー呼び出し順を調べるときはModule#ancestorsメソッドが便利です。
 
+また、Ruby2.7で定数が定義されたソースコードのパスをを返すModule#const_source_location が追加されました。source_locationメソッドの定数版に相当します。
+
+```ruby
+class Foo
+end
+
+p Module.const_source_location(:Foo) #=> ["example.rb", 1]
+```
+
 - Rubyリファレンスマニュアル Methodクラス: https://docs.ruby-lang.org/ja/latest/class/Method.html
+- Rubyリファレンスマニュアル Module#const_source_locationメソッド: https://docs.ruby-lang.org/ja/latest/method/Module/i/const_source_location.html
 
 ## privateメソッドを呼び出す
 
