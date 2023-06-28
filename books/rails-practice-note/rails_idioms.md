@@ -105,12 +105,7 @@ where(age: 14..)
 
 ジョブキュー、セッション、キャッシュなど、オブジェクトを格納するとシリアライズ、デシリアライズされるところがあります。このような場所では、シリアライズ、デシリアライズ可能なオブジェクトを選ぶ必要があります。シリアライズ、デシリアライズを安全に行えないオブジェクトを入れると、格納時や取り出し時に問題が起こることがあります。特に、格納時と取り出し時のRubyやRailsのバージョンが異なるときにシリアライズ、デシリアライズ方法が変わったことで問題が起こることがあり、RubyやRailsをバージョンアップ作業をしたときにバグとして表出するので気づきづらく、注意が必要です。
 
-安全にシリアライズ、デシリアライズ可能なオブジェクトの例は以下です。
-
-- NilClass, String, Integer, Float, BigDecimal, TrueClass, FalseClass, Symbol
-- ActiveSupport::TimeWithZone, Time, Date, ActiveSupport::Duration
-- Array, Hash, ActiveSupport::HashWithIndifferentAccess（ただし、中に入っているオブジェクトがシリアライズ、デシリアライズ可能なこと）
-- GlobalID（後ろで説明しています）
+多くのケースで安全にシリアライズ、デシリアライズ可能なオブジェクトはStringやInteger、ArrayやHashなどです。ArrayやHashは中に入っているオブジェクトもシリアライズ、デシリアライズ可能である必要があります。
 
 モデルであるActiveRecordオブジェクトは、そのままではシリアライズ、デシリアライズ時に問題が起こることがあるので、to_global_idメソッドをつかってGlobalIDオブジェクトへ変換することで安全にシリアライズ、デシリアライズをすることができます。GlobalIDオブジェクトはモデルオブジェクトをアプリ内で一意に識別するURIを生成します。格納時、GlobalIDオブジェクトに対してシリアライズ処理を行うと、URI文字列（String）オブジェクトとして格納されます。このURI文字列はto_sメソッドで確認することができます。
 
@@ -137,7 +132,7 @@ GlobalID::Locator.locate(gid_string)
 # updated_at: Tue, 20 Jun 2023 06:45:44.419445000 UTC +00:00>
 ```
 
-まとめると、ActiveRecordオブジェクトを格納するときはto_global_idメソッドをつかってGlobalIDオブジェクトへ変換する、取り出すときは`GlobalID::Locator.locate`メソッドをつかってGlobalIDオブジェクトからActiveRecordオブジェクトへ復元する、という手順を踏みます。特定のケース、たとえばActiveJobのキューへジョブを入れるときなどは、モデルオブジェクトからGlobalIDオブジェクトへの自動変換、自動復元を行います。
+まとめると、ActiveRecordオブジェクトを格納するときはto_global_idメソッドをつかってGlobalIDオブジェクトへ変換する、取り出すときは`GlobalID::Locator.locate`メソッドをつかってGlobalIDオブジェクトからActiveRecordオブジェクトへ復元する、という手順を踏みます。特定のケース、たとえばActiveJobのキューへジョブを入れるときなどは、モデルオブジェクトからGlobalIDオブジェクトへの自動変換、自動復元を行う機能が用意されています。
 
 GlobalIDはGemになっていて、READMEページに詳細な解説があります。
 
