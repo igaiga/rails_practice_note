@@ -101,6 +101,48 @@ where("age > ?", 13)
 where(age: 14..)
 ```
 
+## シリアライズ、デシリアライズされるところへ入れるオブジェクトに注意しよう
+
+ジョブキュー、セッション、キャッシュなど、オブジェクトを格納するとシリアライズ、デシリアライズされるところがあります。このような場所では、シリアライズ、デシリアライズ可能なオブジェクトを選ぶ必要があります。シリアライズ、デシリアライズを安全に行えないオブジェクトを入れると、格納時や取り出し時に問題が起こることがあります。特に、格納時と取り出し時のRubyやRailsのバージョンが異なるときにシリアライズ、デシリアライズ方法が変わったことで問題が起こることがあり、RubyやRailsをバージョンアップ作業をしたときにバグとして表出するので気づきづらく、注意が必要です。
+
+安全にシリアライズ、デシリアライズ可能なオブジェクトの例は以下です。
+
+- NilClass, String, Integer, Float, BigDecimal, TrueClass, FalseClass, Symbol
+- ActiveSupport::TimeWithZone, Time, Date, ActiveSupport::Duration
+- Array, Hash, ActiveSupport::HashWithIndifferentAccess（ただし、中に入っているオブジェクトがシリアライズ、デシリアライズ可能なこと）
+- GlobalID（後ろで説明しています）
+
+モデルであるActiveRecordオブジェクトは、そのままではシリアライズ、デシリアライズ時に問題が起こることがあるので、to_global_idメソッドをつかってGlobalIDオブジェクトへ変換することで安全にシリアライズ、デシリアライズをすることができます。GlobalIDオブジェクトはモデルオブジェクトをアプリ内で一意に識別するURIを生成します。格納時、GlobalIDオブジェクトに対してシリアライズ処理を行うと、URI文字列（String）オブジェクトとして格納されます。このURI文字列はto_sメソッドで確認することができます。
+
+```ruby
+gid = Book.first.to_global_id
+#=> #<GlobalID:0x0000000106fc3558 @uri=#<URI::GID gid://books-app/Book/1>>
+gid.to_s
+#=> "gid://books-app/Book/1"
+```
+
+GlobalIDオブジェクトおよびそのURI文字列からActiveRecordオブジェクトへ復元するときは`GlobalID::Locator.locate`メソッドをつかいます。このメソッドを呼び出したときにGlobalID URIから該当モデルとそのidを情報を取り出し、DBへselectクエリを実行してActiveRecordオブジェクトへと復元されます。
+
+```ruby
+gid_string = Book.first.to_global_id.to_s
+#=> #<GlobalID:0x00000001085cfe00 @uri=#<URI::GID gid://books-app/Book/1>>
+
+GlobalID::Locator.locate(gid_string)
+# Book Load (0.2ms)  SELECT "books".* FROM "books" WHERE "books"."id" = ? LIMIT ?  [["id", 1], ["LIMIT", 1]]
+#=> #<Book:0x00000001080ad170
+# id: 1,
+# title: "Ruby超入門",
+# memo: "Rubyの入門書",
+# created_at: Tue, 20 Jun 2023 06:45:44.419445000 UTC +00:00,
+# updated_at: Tue, 20 Jun 2023 06:45:44.419445000 UTC +00:00>
+```
+
+まとめると、ActiveRecordオブジェクトを格納するときはto_global_idメソッドをつかってGlobalIDオブジェクトへ変換する、取り出すときは`GlobalID::Locator.locate`メソッドをつかってGlobalIDオブジェクトからActiveRecordオブジェクトへ復元する、という手順を踏みます。特定のケース、たとえばActiveJobのキューへジョブを入れるときなどは、モデルオブジェクトからGlobalIDオブジェクトへの自動変換、自動復元を行います。
+
+GlobalIDはGemになっていて、READMEページに詳細な解説があります。
+
+- https://github.com/rails/globalid
+
 ## Model.findよりもcurrent_user.relationをつかう
 
 ControllerでModel.findでDBからレコードを得るケースでは、状況によってはcurrent_user.relation.findで取得する方が好ましいです。
