@@ -127,6 +127,7 @@ class Foo
 end
 
 foo = Foo.new
+foo.instance_eval{ bar(1, 2) }
 foo.send(:bar, 1, 2)
 ```
 
