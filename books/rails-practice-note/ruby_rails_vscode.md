@@ -192,18 +192,14 @@ rails serverを起動するときは `-b 0.0.0.0` オプションを追加して
 
 ## RuboCop
 
-vscode-ruby-light拡張をつかうと、書いているコードをリアルタイムにRuboCopで検査することができます。また、オートコレクトもワンクリックで行うことができます。
+RuboCopに標準で入っているLSP機能と、それをつかうVSCode拡張 vscode-rubocop をインストールすることで、VSCode上で書いているコードをリアルタイムにRuboCopで検査することができます。
 
-- [vscode-ruby-light](https://marketplace.visualstudio.com/items?itemName=r7kamura.vscode-ruby-light)
+- VSCode拡張 vscode-rubocop https://marketplace.visualstudio.com/items?itemName=rubocop.vscode-rubocop
+- RuboCop Docs LSP: https://docs.rubocop.org/rubocop/usage/lsp.html
 
-vscode-ruby-light拡張を有効にして、.rubocop.ymlがあり、rubocopコマンドが実行可能になっていれば、自動でRuboCopを実行して結果を表示します。
+セットアップはVSCode拡張 vscode-rubocop をVSCodeへインストールして、有効にするだけです。rubocopコマンドが実行可能になっていれば、自動でRuboCopを実行して結果を表示します。手動でLSPを起動するコマンドを実行する必要はありません。
 
 ![](/images/rails_practice_note/vscode/vscode_rubocop1.png)
-
-左側のアイコンをクリックすると、オートコレクトを実行することもできます。
-
-![](/images/rails_practice_note/vscode/vscode_rubocop2.png)
-![](/images/rails_practice_note/vscode/vscode_rubocop3.png)
 
 ## 参考資料
 
