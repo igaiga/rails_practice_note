@@ -26,19 +26,11 @@ debug gemとVSCodeのデバッグ機能を組み合わせてつかう方法で�
 
 事前準備として、VSCodeへ[VSCode rdbg Ruby Debugger拡張](https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg)をインストールしておきます。
 
-また、ターミナルからVSCodeを起動するcodeコマンドがないときは、前述の節を参考に [VSCode CLI](https://code.visualstudio.com/docs/editor/command-line) をインストールしておきます。
+また、ターミナルからVSCodeを起動するcodeコマンドがないときは、前の節を参考に [VSCode CLI](https://code.visualstudio.com/docs/editor/command-line) をインストールしておきます。
 
-### 実行中のRubyコード、RailsコードをVSCodeを起動してデバッグ
+### VSCode上でRubyコード、Railsコードをデバッグ
 
-debug gemはターミナルの標準入出力をつかってデバッグコンソールを起動しますが、VSCodeから接続してデバッグすることもできます。
-
-binding.breakで起動しているデバッグコンソールで`open vscode`コマンドを実行すると、VSCodeが起動してデバッグすることができます。`open chrome` のときと同様です。
-
-Chromeデベロッパーツールとの接続はTCP接続(URLで接続先を指定)でしたが、VSCodeとの接続はUNIX domain socket(ファイルパスで接続先を指定)で接続されます。
-
-### Rubyコード、Railsコードをデバッグ
-
-VSCodeのメニューから 実行 - デバッグの開始 を実行したときにdebug gemをつかう方法です。
+VSCode上でブレークポイントを設定し、メニューから 実行 - デバッグの開始 を実行したときにdebug gemをつかってデバッグする方法です。プログラム実行がブレークポイントを設定したコードへ到達すると、debug gemの機能で一時停止し、VSCodeのパネルからステップ実行や再開を行うことができます。
 
 「デバッグの開始」時の動作を設定するファイルは `.vscode/launch.json` です。ファイルがなければ自動作成されます。たとえば、rails serverを起動するためには.vscode/launch.jsonを次のように編集します。各設定の意味は後述します。
 
@@ -87,7 +79,7 @@ launch.jsonの各設定の意味は次の通りです。
 - `"askParameters": true` 実行前にダイアログで実行コマンドを確認
 - `"useBundler": true` bundle exec を付与
 
-また、環境変数を指定したいときは以下のようにconfigurationsに追加します。
+また、環境変数を指定したいときは、.vscode/launch.jsonのconfigurationsに次のように追加します。
 
 ```.vscode/launch.json
 "configurations": [
@@ -101,6 +93,14 @@ launch.jsonの各設定の意味は次の通りです。
 ```
 
 サンプルコード: https://github.com/igaiga/rails704_ruby312_docker
+
+### ターミナルで実行中のRubyプログラムからVSCodeへ接続してデバッグ
+
+ターミナル上でRubyプログラムを実行しているとき、debug gemはターミナルの標準入出力をつかってデバッグコンソールを起動しますが、そこからVSCodeへ接続してデバッグすることもできます。
+
+binding.breakで起動しているデバッグコンソールで`open vscode`コマンドを実行すると、VSCodeが起動して接続し、デバッグすることができます。`open chrome` のときと同様です。
+
+Chromeデベロッパーツールとの接続はTCP接続(URLで接続先を指定)でしたが、VSCodeとの接続はUNIX domain socket(ファイルパスで接続先を指定)で接続されます。
 
 ## VSCode上でdocker-compose.ymlをつかってDockerコンテナを起動
 
