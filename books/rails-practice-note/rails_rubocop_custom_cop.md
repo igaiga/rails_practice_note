@@ -6,11 +6,11 @@ RuboCopに自作のカスタムCop（検査ルール）を追加実装する方�
 
 ## カスタムCop用 Gemを作成
 
-rubocop-extension-generator gemをつかって、これからつくるカスタムCop gemをローカルに生成します。
+rubocop-extension-generator Gemをつかって、これからつくるカスタムCop Gemをローカルに生成します。
 
 - https://github.com/rubocop/rubocop-extension-generator
 
-rubocop-extension-generatorコマンドにつづけて新しくつくるカスタムCop用gem名を指定します。rubocop-xxxという名前にするルールになっています。
+rubocop-extension-generatorコマンドにつづけて新しくつくるカスタムCop用Gem名を指定します。rubocop-xxxという名前にするルールになっています。
 
 - $ rubocop-extension-generator rubocop-igaiga
 
@@ -49,14 +49,14 @@ Do 4 steps:
 
 表示された4ステップをそれぞれ対応していきます。
 
-- 1. config/default.yml の Style/ReplaceElsif の情報を書きます
-- 2. 生成されたファイルにCopを実装します
-- 3. git commitします
-- 4. Changelogへ追記
+- 1. config/default.yml へ Style/ReplaceElsif の情報を書く
+- 2. 生成されたファイルにCopを実装
+- 3. git commit
+- 4. changelogへ追記
 
 ## config/default.ymlを編集
 
-1番はconfig/default.ymlのStyle/ReplaceElsifの情報を埋めます。変更例は以下です。
+1番はconfig/default.ymlのStyle/ReplaceElsifの情報を埋めます。変更例は次のようになります。
 
 ```yaml
 Style/ReplaceElsif:
@@ -189,11 +189,32 @@ end
 
 ここでは、`on_if(node)` メソッド中で各ノードに対して検査を行い、警告に該当するときは `add_offense(node)` メソッドでその部分に警告がある旨を登録します。警告するだけでなく、自動置換に対応するよう実装することも可能なので、後述します。
 
-`on_if(node)` メソッドはif式が書かれているときに呼び出されます。nodeにはRuboCopでつかわれているParser gemが静的解析したASTの該当部分であるRuboCop::AST::IfNodeオブジェクトが代入されています。このオブジェクトにmethodsメソッドで利用可能なメソッドを調べたところ、`elsif?` メソッドがありました。これでelsifがつかわれているノードかどうか調べることができそうです。elsifノードのときに `add_offense(node)` メソッドを呼び出すように実装しています。テストが通るようにCopを実装していきます。
+`on_if(node)` メソッドはコールバックメソッドで、if式が書かれているときに呼び出されます。nodeにはRuboCopでつかわれているParser Gemが静的解析したASTの該当部分であるRuboCop::AST::IfNodeオブジェクトが代入されています。ASTはRubyコードを実行するときにつくられる中間表現で、空白を取り除くなどして実行に必要な情報だけに絞られているため、コードを検査する用途で便利につかうことができます。
 
-node検査方法について詳しくはRuboCop公式ページに詳しく書かれています。`on_if` メソッド以外の対象ノードが出てきたときに呼ばれるメソッド群には `on_send`, `on_block` ほかが用意されています。また、`binding.irb`などで止めてmethodsメソッドなどをつかってオブジェクトに利用できるメソッドを尋ねるのも良い方法です。
+RuboCop::AST::IfNodeオブジェクトにmethodsメソッドで利用可能なメソッドを調べたところ、`elsif?` メソッドがありました。これでelsifがつかわれているノードかどうか調べることができそうです。elsifノードのときに `add_offense(node)` メソッドを呼び出すように実装しています。テストが通るようにCopを実装していきます。
 
-RuboCop公式ページ "Development": https://docs.rubocop.org/rubocop/development.html
+node検査方法について詳しくはRuboCop公式ページ ["Development"](https://docs.rubocop.org/rubocop/development.html) に詳しく書かれています。
+
+`on_if` メソッド以外のコールバックメソッド群には `on_send`, `on_block` ほかが用意されています。これらのコールバックメソッドはParser gemが用意していて、[Parser::Processorクラス](https://github.com/whitequark/parser/blob/v3.2.2.3/lib/parser/ast/processor.rb)でメソッド群が定義されています。これらのメソッドをRuboCopでつかえるように、RuboCop AST Gem [RuboCop::AST::Traversal::CallbackCompilerモジュール](https://github.com/rubocop/rubocop-ast/blob/v1.29.0/lib/rubocop/ast/traversal.rb)で定義しています。
+
+ASTと呼び出されるコールバックメソッドとの対応表はParser Gem [Parser::Builders::Defaultクラス](https://github.com/whitequark/parser/blob/v3.2.2.3/lib/parser/builders/default.rb)に書かれています。`Parser::CurrentRuby.parse("some Ruby code")`メソッドでASTを調べて、対応するコールバックメソッドを探してみてください。
+
+```ruby
+require "parser/current"
+p Parser::CurrentRuby.parse("x = 1 if y == 1")
+```
+```
+s(:if,
+  s(:send,
+    s(:send, nil, :y), :==,
+    s(:int, 1)),
+  s(:lvasgn, :x,
+    s(:int, 1)), nil)
+```
+
+- RuboCop公式ページ "Development": https://docs.rubocop.org/rubocop/development.html
+- Parser Gem Parser::Processorクラス: https://github.com/whitequark/parser/blob/v3.2.2.3/lib/parser/ast/processor.rb
+- Parser Gem Parser::Builders::Defaultクラス: https://github.com/whitequark/parser/blob/v3.2.2.3/lib/parser/builders/default.rb
 
 ## lib/rubocop/cop/gem_name_cops.rb の require_relative を確認
 
@@ -240,9 +261,29 @@ elsif y == 2
 1 file inspected, 1 offense detected
 ```
 
-## auto correct機能で修正可能にする
+## オートコレクト機能で修正可能にする
 
-TODO: あとで書きます。
+RuboCopのオートコレクト機能をつかったときに、提案したコードへ自動置換するようにカスタムCopを実装することができます。
+
+次のコードはオートコレクトの実装例で、`if` を `case when` へ、 `elsif` を `when` へ置換する例です。
+
+```ruby
+def on_if(node)
+  return unless node.elsif?
+
+  add_offense(node) do |corrector|
+    # if => case when
+    replacing_string = "case" + "\n" +
+     " " * node.parent.source_range.column + "when"
+    corrector.replace(node.parent.loc.keyword, replacing_string)
+    corrector.replace(node.loc.keyword, "when") # elsif => when
+  end
+end
+```
+
+nodeで取得できる各種Nodeオブジェクトと、add_offenceメソッドのブロック引数で得られるRuboCop::Cop::Correctorオブジェクトをつかって置換機能を実装します。
+
+RuboCop::Cop::Correctorオブジェクトの置換メソッド群の例です。
 
 | メソッド |  |
 | --- | --- |
@@ -251,7 +292,11 @@ TODO: あとで書きます。
 | insert_after(node, content) | node の後に content を追加 |
 | wrap(node, insert_before_content, insert_after_content) | nodeをinsert_before_contentとinsert_after_contentで挟みます |
 
-## Gemを試験する
+rubocopコマンドで動作確認するときは、次のように`--autocorrect`オプションをつけます。
+
+- $ bundle exec rubocop target.rb --require ./lib/rubocop/cop/style/replace_elsif.rb --only Style/ReplaceElsif --cache false --autocorrect
+
+## Gemの動作確認
 
 別の場所にたとえばrails newした新しいアプリを置いて、実装中のRubocop カスタムCop Gemをつかってみます。実装中のRubocop カスタムCop Gemには実装したファイルを忘れずにgit commitしておきます。
 
@@ -285,7 +330,7 @@ AllCops:
     - https://docs.rubocop.org/rubocop/development.html
 - RubocopのRSpecサンプルコード
     - https://github.com/rubocop/rubocop-rspec
-- RuboCop gem cop置き場
+- RuboCop Gem cop置き場
     - https://github.com/rubocop/rubocop/tree/master/lib/rubocop/cop
 - RuboCopコミッタであるkoicさんの講演資料 "Rubocopのしくみ"
     - https://speakerdeck.com/koic/rubocop-under-a-microscope
