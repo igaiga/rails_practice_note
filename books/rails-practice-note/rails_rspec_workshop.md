@@ -417,44 +417,10 @@ end
 - あまりつかわないですがafterもあります
 - 詳細: https://relishapp.com/rspec/rspec-core/docs/hooks/before-and-after-hooks
 
-## subject: テスト対象を書く道具
-
-- subjectメソッドというテスト対象を明示する道具もあります
-- 次のコードでは `Book.new(title: "RubyBook", author: "matz")` がテスト対象であることを明示します
-- itの外に書くことに気をつけてください
-- subjectでテスト対象を、itで期待する結果を書きます
-
-```ruby
-context "Book#titleが文字列のとき" do
-  subject { Book.new(title: "RubyBook", author: "matz") }
-  it "titleとauthorを結んだ文字列が返ること" do
-    expect(subject.title_with_author).to eq("RubyBook - matz")
-  end
-end
-```
-
-- つかうかどうかはプロジェクトに寄ります
-    - 私はつかわない派です
-
-## subjectに名前をつけることもできる
-
-- subjectに名前をつけることもできます
-
-```ruby
-context "Book#titleがnilのとき" do
-  subject(:book){ Book.new(author: "matz") } # subjectにbookと名前をつける
-  it "空のtitleとauthorを結んだ文字列が返ること" do
-    expect(book.title_with_author).to eq(" - matz") # bookはBook.new(author: "matz")を指す
-  end
-end
-```
-
 ## let, let!: 変数を書く道具
 
 - 変数を書く道具としてlet、let!が用意されています
-- 文法は名前付きsubjectと同じです
-- subjectは「テスト対象である」ことを含んでいましたがlet, let!にはその意味はありません
-- つかうかどうかはプロジェクトに寄ると思います
+- つかうかどうかはプロジェクトに寄ります
 - letとlet!の違いは実行タイミングです
     - letは利用時に実行されます
     - let!は書かれた場所で実行されます
@@ -466,6 +432,39 @@ context "Book#titleが文字列のとき" do
   let(:book){ Book.new(title: "RubyBook", author: "matz") }
   it "titleとauthorを結んだ文字列が返ること" do
     expect(book.title_with_author).to eq("RubyBook - matz")
+  end
+end
+```
+
+## subject: テスト対象を書く道具
+
+- subjectメソッドというテスト対象を明示する道具もあります
+- 次のコードでは `Book.new(title: "RubyBook", author: "matz")` がテスト対象であることを明示します
+- subjectでテスト対象を、itで期待する結果を書きます
+- it中でsubjectを呼ぶと、subjectにつづけて書いたブロックを実行します
+- itの外にsubjectを書くことに気をつけてください
+- つかうかどうかはプロジェクトに寄ります
+    - 私はつかわない派です
+
+```ruby
+context "Book#titleが文字列のとき" do
+  subject { Book.new(title: "RubyBook", author: "matz") }
+  it "titleとauthorを結んだ文字列が返ること" do
+    expect(subject.title_with_author).to eq("RubyBook - matz")
+  end
+end
+```
+
+## subjectに名前をつけることもできる
+
+- subjectに名前をつけることもできます
+- 文法はletと同じです
+
+```ruby
+context "Book#titleがnilのとき" do
+  subject(:book){ Book.new(author: "matz") } # subjectにbookと名前をつける
+  it "空のtitleとauthorを結んだ文字列が返ること" do
+    expect(book.title_with_author).to eq(" - matz") # bookはBook.new(author: "matz")を指す
   end
 end
 ```
