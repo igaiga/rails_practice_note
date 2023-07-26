@@ -101,6 +101,55 @@ where("age > ?", 13)
 where(age: 14..)
 ```
 
+整数だけでなく、TimeWithZone型のような日時型でもつかえます。たとえば、registered_atが先月の始めから終わりまでに入っているかどうかは次のコードで調べることができます。
+
+```ruby
+where(registered_at: Time.zone.now.last_month.beginning_of_month..Time.zone.now.last_month.end_of_month)
+# where("registered_at >= ?", Time.zone.now.last_month.beginning_of_month).where("registered_at <= ?", Time.zone.now.last_month.end_of_month). と同じ
+```
+
+また、beginning_of_monthからend_of_monthまででつくられるRangeオブジェクトはall_monthメソッドでもつくることができます。
+
+```ruby
+Time.zone.now.last_month.all_month
+#=>
+# Thu, 01 Jun 2023 00:00:00.000000000 UTC +00:00
+# ..
+# Fri, 30 Jun 2023 23:59:59.999999999 UTC +00:00
+
+# 以下と同じ
+
+Time.zone.now.last_month.beginning_of_month..Time.zone.now.last_month.end_of_month
+#=>
+# Thu, 01 Jun 2023 00:00:00.000000000 UTC +00:00
+# ..
+# Fri, 30 Jun 2023 23:59:59.999999999 UTC +00:00
+```
+
+## 範囲内に含まれるかどうかをRangeオブジェクトをつかって判定する
+
+変数ageが13以上19以下かどうかを調べる次のようなコードがあるとします。
+
+```ruby
+puts "teenage" if 13 <= age && age <= 19
+```
+
+Rangeオブジェクトと`include?`メソッドをつかうと次のように書くことができます。
+
+```ruby
+puts "teenage" if (13..19).include?(age)
+```
+
+include?メソッドがつかわれることにより「範囲内に含まれるかどうか」の意味をコードで表現することができます。
+
+また、変数ageをレシーバにして`in?`メソッドで書くことで、ageを主語として表現することもできます。include?メソッドはRubyで定義されているメソッドで、in?メソッドはRailsで定義されているメソッドです。
+
+```ruby
+puts "teenage" if age.in?(13..19)
+```
+
+include?メソッドやin?メソッドは整数オブジェクトだけでなく、日時オブジェクトほかRangeオブジェクトをつくれるものに対してつかえます。
+
 ## シリアライズ、デシリアライズされるところへ入れるオブジェクトに注意しよう
 
 ジョブキュー、セッション、キャッシュなど、オブジェクトを格納するとシリアライズ、デシリアライズされるところがあります。このような場所では、シリアライズ、デシリアライズ可能なオブジェクトを選ぶ必要があります。シリアライズ、デシリアライズを安全に行えないオブジェクトを入れると、格納時や取り出し時に問題が起こることがあります。特に、格納時と取り出し時のRubyやRailsのバージョンが異なるときにシリアライズ、デシリアライズ方法が変わったことで問題が起こることがあり、RubyやRailsをバージョンアップ作業をしたときにバグとして表出するので気づきづらく、注意が必要です。
