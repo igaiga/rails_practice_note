@@ -102,6 +102,37 @@ infoコマンド(iと省略可能)で変数一覧とそれらの情報を表示�
 - ls <object>
   - objectのスコープでつかえるメソッド、インスタンス変数を表示
 
+### backtrace コマンド
+
+backtraceコマンド(btと省略可能)でメソッド呼び出し履歴(バックトレース)を表示します。
+
+- bt
+  - メソッド呼び出し履歴(バックトレース)を表示
+- bt <num>
+  - 直近num件だけ表示
+- bt /regexp/
+  - メソッド名やファイルパスを正規表現 /regexp/ でマッチさせて該当のものだけを表示
+
+次の例はRailsの一覧表示画面(indexアクション)を表示したときのbtコマンドの表示結果です。
+
+```
+=>#0	BooksController#index at ~/work/rails707_ruby322_books_app/app/controllers/books_controller.rb:6
+  #1	ActionController::BasicImplicitRender#send_action(method="index", args=[]) at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/actionpack-7.0.7/lib/action_controller/metal/basic_implicit_render.rb:6
+  #2	AbstractController::Base#process_action at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/actionpack-7.0.7/lib/abstract_controller/base.rb:215
+  #3	ActionController::Rendering#process_action at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/actionpack-7.0.7/lib/action_controller/metal/rendering.rb:165
+  #4	block in process_action at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/actionpack-7.0.7/lib/abstract_controller/callbacks.rb:234
+  #5	block in run_callbacks at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/activesupport-7.0.7/lib/active_support/callbacks.rb:118
+  #6	ActionText::Rendering::ClassMethods#with_renderer(renderer=#<BooksController:0x0000000000f820>) at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/actiontext-7.0.7/lib/action_text/rendering.rb:20
+  #7	block {|controller=#<BooksController:0x0000000000f820>, action=#<Proc:0x00000001096b05d0 /Users/igaiga/....|} in <class:Engine> (4 levels) at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/actiontext-7.0.7/lib/action_text/engine.rb:69
+  #8	[C] BasicObject#instance_exec at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/activesupport-7.0.7/lib/active_support/callbacks.rb:127
+  #9	block in run_callbacks at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/activesupport-7.0.7/lib/active_support/callbacks.rb:127
+  #10	ActiveSupport::Callbacks#run_callbacks(kind=:process_action) at ~/.rbenv/versions/3.2.2/lib/ruby/gems/3.2.0/gems/activesupport-7.0.7/lib/active_support/callbacks.rb:138
+```
+
+[Kernel.#callerメソッド](https://docs.ruby-lang.org/ja/latest/method/Kernel/m/caller.html)や[Kernel.#caller_locations](https://docs.ruby-lang.org/ja/latest/method/Kernel/m/caller_locations.html)メソッドと同様の機能ですが、backtraceコマンドはメソッドを呼び出したときに渡された引数の内容もあわせて表示します。
+
+また、 `bt /regexp/` とbtコマンドにつづけて正規表現を書くことで、メソッド名やファイルパスを正規表現でマッチさせて該当のものだけを表示することができます。たとえば、自分のRailsアプリが置かれているフォルダ名を指定すれば、自分のRailsアプリで呼び出されたメソッド履歴だけに絞って表示させることができます。
+
 ### trace コマンド
 
 trace コマンドを指定しておくと、以降の処理で指定したイベントが発生したときにその情報を表示します。Rubyの組み込みライブラリであるTracePointに定義されているイベント群に近いイベントが用意されています。
