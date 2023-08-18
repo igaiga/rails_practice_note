@@ -91,7 +91,7 @@ group :development do
 end
 ```
 
-- Gemfileを編集してrspec-rails gem追加
+- Gemfileを編集してspring-commands-rspec gem追加
     - 追加環境はdevelopmentだけで良いようです
     - インストール時だけでなく、使っている間はずっと入れておく必要があるようです
 
