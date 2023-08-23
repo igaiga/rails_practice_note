@@ -212,7 +212,17 @@ end
 - $ bin/rspec spec/models/book_spec.rb
     - `1 example, 1 failure`
     - failureが1で表示されれば想定通りです
-- エラーメッセージの読み方を次に説明します
+- itメソッドの引数には、NG時に表示される説明文を書きます
+  - ここでは `"trueであるとき、falseになること"` です
+- itメソッドのブロック中にテストを書きます
+- テストは `expect(テスト対象コード).to マッチャー(想定テスト結果)` といった形になります
+- expectメソッドの引数にテスト対象コード(オブジェクト)を渡します
+  - ここでテスト対象のオブジェクトは`true`です
+- `expect(...).to` につづけてマッチャーを書きます
+- マッチャーとはマッチ(一致)するかを判定する道具です
+  - ここでのマッチャーは `eq` メソッドで、これは `==` で一致判定をします
+  - マッチャーのメソッドの引数に想定するテスト結果を渡します
+- テスト失敗時のメッセージの読み方を次に説明します
 
 ## NG時のメッセージの読み方
 
@@ -240,7 +250,7 @@ rspec ./spec/models/book_spec.rb:4
 ## Model specを書く - OKになるテストを書く
 
 - 「trueを期待しているときに、trueになる」テストを書きます
-    - 復習: itブロック内に expect(テスト対象コード).to マッチャー(想定テスト結果) を書く
+    - 復習: itブロック内に `expect(テスト対象コード).to マッチャー(想定テスト結果)` を書く
 
 spec/models/book_spec.rb
 
@@ -262,7 +272,7 @@ end
 
 - テスト対象にBookモデルをつかってみましょう
 - Book.newが行われることを確認するテストを書きます
-- 資料ではほかを省略してitだけ書きます
+- 本資料ではほかを省略してitだけ書きます
 
 spec/models/book_spec.rb
 
@@ -465,6 +475,43 @@ context "Book#titleがnilのとき" do
   subject(:book){ Book.new(author: "matz") } # subjectにbookと名前をつける
   it "空のtitleとauthorを結んだ文字列が返ること" do
     expect(book.title_with_author).to eq(" - matz") # bookはBook.new(author: "matz")を指す
+  end
+end
+```
+
+## 1つのitメソッドのブロックに複数のexpectを書くことができる
+
+- 1つのitメソッドのブロックに複数のexpectを書くことができます
+
+```ruby
+it "bookの情報が取得できること" do
+  expect(book.title).to eq("RubyBook")
+  expect(book.author).to eq("matz")
+  expect(book.title_with_author).to eq("RubyBook - matz")
+end
+```
+
+- 1つのitに1つのexpectだけを書く方がテストとしては読みやすくなります
+  - しかし、itメソッドの実行ごとにbefore, let, let! などが実行されます
+  - before, let, let! の中でテストでつかうデータを作成するのが一般的です
+  - その結果、1つのitに1つのexpectだけを書くようにすると、テストでつかうデータの生成と破棄が頻繁に起きることがデメリットです
+- 一方で、itメソッド中に複数expectがあるときにどこかでexpectが失敗した場合、後続するexpect群はテスト実行されません
+  - 後続も実行したいときはaggregate_failuresオプションを追加します
+
+```ruby
+it "bookの情報が取得できること", :aggregate_failures do
+  expect(book.title).to eq("RubyBook")
+  expect(book.author).to eq("matz")
+  expect(book.title_with_author).to eq("RubyBook - matz")
+end
+```
+
+- テストコード全体でaggregate_failuresオプションを追加したいときはspec_helper.rbなどへ次の設定を追加します
+
+```ruby
+RSpec.configure do |config|
+  config.define_derived_metadata do |meta|
+    meta[:aggregate_failures] = true
   end
 end
 ```
