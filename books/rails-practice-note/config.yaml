@@ -6,10 +6,7 @@ price: 0 # 有料の場合200〜5000
 # 本に含めるチャプターを順番に並べましょう
 chapters:
   - preface
-  - ar_merge
-  - ar_select_pluck
-  - ar_group_having_count
-  - ar_association_options
+  - ar_usefuls
   - ar_inverse_of
   - ar_transaction_lock
   - ar_sql_injection
