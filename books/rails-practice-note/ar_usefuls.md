@@ -3,6 +3,55 @@ title: "[ActiveRecord] ActiveRecordの便利な道具"
 ---
 # [ActiveRecord] ActiveRecordの便利な道具
 
+## 関連先を指定するjoinsメソッド、whereメソッドの書き方
+
+User has_many books (User 1-* Book) という関連があるとき、UserモデルからBookモデルを指定するwhereメソッドの書き方は次のようになります。
+
+```ruby
+User.joins(:books).where(books: {title: "Ruby"})
+# SQL: SELECT "users".* FROM "users" INNER JOIN "books" ON "books"."user_id" = "users"."id" WHERE "books"."title" = ?  [["title", "Ruby"]]
+```
+
+関連名、ここではhas_manyである`books`をwhereメソッドのキーワード引数のキーワードに指定して、引数の値にはHashオブジェクトでキーにカラム名を、値に検索語を書きます。
+
+多段の関連も指定可能です。User has_many books, Book has_many novelties (User 1-* Book 1-* Novelty) のように2つ先の関連があるとき、UserモデルからNoveltyモデルを指定するwhereメソッドの書き方は次のようになります。
+
+```ruby
+User.joins(books: :novelties).where(novelties: {name: "postcard"})
+# SQL: SELECT "users".* FROM "users" INNER JOIN "books" ON "books"."user_id" = "users"."id" INNER JOIN "novelties" ON "novelties"."book_id" = "books"."id" WHERE "novelties"."name" = ?  [["name", "postcard"]]
+```
+
+joinsメソッドにはキーワード引数のキーワードに最初の関連名、引数の値に2つ目の関連名を指定します。whereメソッドの書き方は1段の関連のときと同じ書き方で、関連名`novelties`をキーワード引数のキーワードに、引数の値にはHashオブジェクトでキーにカラム名を、値に検索語を書きます。
+
+また、 `User.joins(books: :novelties).where(books: {novelties: {name: "postcard"}})` とwhereメソッドに関連名booksから書き始めることもできます。発行されるSQLは同じです。
+
+belongs_to関連を多段で指定するときは次のようになります。whereメソッドのキーワード引数のキーワードには関連名またはテーブル名を指定することができます。
+
+```ruby
+Novelty.joins(book: :user).where(user: {name: "igaiga"})
+# SQL: SELECT "novelties".* FROM "novelties" INNER JOIN "books" ON "books"."id" = "novelties"."book_id" INNER JOIN "users" "user" ON "user"."id" = "books"."user_id" WHERE "user"."name" = ?  [["name", "igaiga"]]
+
+Novelty.joins(book: :user).where(users: {name: "igaiga"})
+# SQL: SELECT "novelties".* FROM "novelties" INNER JOIN "books" ON "books"."id" = "novelties"."book_id" INNER JOIN "users" ON "users"."id" = "books"."user_id" WHERE "users"."name" = ?  [["name", "igaiga"]]
+
+Novelty.joins(book: :user).where(book: {users: {name: "igaiga"}})
+# SQL: SELECT "novelties".* FROM "novelties" INNER JOIN "books" "book" ON "book"."id" = "novelties"."book_id" INNER JOIN "users" ON "users"."id" = "book"."user_id" WHERE "users"."name" = ?  [["name", "igaiga"]]
+
+Novelty.joins(book: :user).where(books: {users: {name: "igaiga"}})
+# SQL: SELECT "novelties".* FROM "novelties" INNER JOIN "books" ON "books"."id" = "novelties"."book_id" INNER JOIN "users" ON "users"."id" = "books"."user_id" WHERE "users"."name" = ?  [["name", "igaiga"]]
+```
+
+参考資料欄の「Railsガイド Active Record クエリインターフェイス テーブルを結合する」には、より複雑なパターンのjoinsメソッドの書き方が紹介されています。
+
+### 参考資料
+
+- Railsガイド Active Record クエリインターフェイス テーブルを結合する
+  - https://railsguides.jp/active_record_querying.html
+
+### サンプルコード
+
+- https://github.com/igaiga/basics_of_active_record/tree/3step_relations
+
 ## mergeメソッド
 
 AR::ReleationオブジェクトにmergeメソッドをつかってAR::Releationを渡すと、AR::Releation同士を結合することができます。
@@ -215,9 +264,9 @@ Book.group(:title).order(count_all: :desc).limit(3).count
 #=> {"book2"=>3, "book1"=>2, "book0"=>2}
 ```
 
-### 資料
+### 参考資料
 
-- Railsガイド「クエリインターフェイス」: https://railsguides.jp/active_record_querying.html
+- Railsガイド Active Record クエリインターフェイス: https://railsguides.jp/active_record_querying.html
 - groupメソッド: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-group
 - havingメソッド: https://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-having
 - countメソッド: https://api.rubyonrails.org/classes/ActiveRecord/Calculations.html#method-i-count
