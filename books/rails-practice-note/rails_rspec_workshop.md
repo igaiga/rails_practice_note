@@ -7,7 +7,7 @@ title: "[Rails基礎] RSpec基礎講座"
   - この資料に書かれているコードのうち、動かせそうなものは手元で書いて動かしてみてください
 - サンプルコード
   - https://github.com/igaiga/rails704_ruby312_rspec
-  - 説明につかっているコードがだいたい入っています
+  - 説明につかっているコードはほぼ全て入っています
   - Rails7.0.4, Ruby3.1.2, rspec-rails 5.1.2, rspec-core 3.11.0
 
 ## RSpecとminitestの違い
@@ -976,14 +976,16 @@ end
 - このように書くと、対象のオブジェクトのreceiveで指定したメソッド呼び出しだけ動作を変更することができます
 - receiveで指定したメソッドは、本来のメソッドは呼び出されず、and_returnで指定した戻り値を返すだけになります
 - and_returnで戻り値を指定するのではなく、そのメソッドの処理をブロックで書くこともできます。
-    - `allow(book).to receive(:lucky?){ some_method }`
-    - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/configuring-responses/block-implementation
+  - `allow(book).to receive(:lucky?){ some_method }`
+  - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/configuring-responses/block-implementation
 - and_return以外にもこんな道具が用意されています
   - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/configuring-responses
 - allowメソッドのドキュメント
   - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/basics/allowing-messages
 
-- receiveで指定したメソッドが呼び出されたかどうか確認することもできます
+- 指定したメソッドが呼び出されたかどうかを確認することもできます
+  - `expect(book).to receive(:lucky?)`
+    - このように書くと、bookに代入されたオブジェクトに対してlucky?メソッドが呼び出されればテストOKになります
 
 ```ruby
 describe "Book#bonus" do
@@ -1005,20 +1007,20 @@ end
 
 - ここでのbookは既存のオブジェクトの一部の動作を変更することでテスト用のオブジェクトをつくりました
 - doubleメソッドをつかうと、対象クラスのオブジェクトをつかわずにモックやスタブをつくれます
-- 詳しく知りたい場合はドキュメントを読んでください
+- 詳しく知りたいときは次のドキュメントが参考になります
   - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/basics/test-doubles
   - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/verifying-doubles
 
 - 参考資料
   - 基礎の説明
     - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs
-  - サンプルコードがいろいろ書かれている
+  - サンプルコード集
     - https://relishapp.com/rspec/rspec-core/v/3-10/docs/mock-framework-integration/mock-with-rspec
 
 ##  例外を確認する技
 
 - 例外が飛ぶことを確認するテストは次のように書きます
-    - ほかのexpectの書き方と違ってブロックであることに注意
+    - ほかのexpectの書き方と違ってブロックを渡すことに注意してください
 
 ```ruby
 expect { ... }.to raise_error
@@ -1085,7 +1087,7 @@ end
 
 ### development環境で使うときの設定
 
-includeできる環境で以下
+- 通常はtest環境でだけでつかえれば問題ないですが、development環境でつかうときは以下を設定します
 
 ```ruby
 require 'active_support/testing/time_helpers'
