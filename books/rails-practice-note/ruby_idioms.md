@@ -553,3 +553,25 @@ p x #=> 1
 1 => x
 p x #=> 1
 ```
+
+## Rubyのライブラリ分類とDefault Gem, Bundled Gem
+
+Rubyのライブラリは次の3つに分類できます。
+
+- 組み込みライブラリ
+- 標準添付ライブラリ
+- Gem
+
+組み込みライブラリはRubyと一緒にインストールされていて、requireを書かなくてもつかうことができるクラス群です。例としてはArray、Hash、String などがあります。
+
+標準添付ライブラリはRubyと一緒にインストールされていて、requireを書いてつかうクラス群です。例としてはJSON、YAML、OpenSSLなどがあります。
+
+GemはRubyGems(gemコマンド)やBunlder(bundleコマンド)でインストールするライブラリで、BundlerでつかうときにはGemfileに追記して、必要に応じてrequireしてつかいます。[RubyGems.org](https://rubygems.org)で管理されています。例としてはRedis GemやRSpec Gemなどがあり、Railsも複数のGemの集合体です。
+
+ここまで説明してきたように、組み込みライブラリと標準添付ライブラリはRubyと一緒にインストールされます。これらのライブラリにたとえば脆弱性を修正するようなリリースがあったときに、Rubyのバージョンを上げるよりも、そのライブラリだけをバージョンアップできた方が便利です。組み込みライブラリおよび標準添付ライブラリの一部はDefault Gemという仕組みで提供されていて、RubyGemsの仕組みをつかってライブラリ単体でバージョンアップすることが可能です。
+
+Default Gemで提供されているライブラリは、BunlderをつかってGemfileに追記したり、RubyGemsのgemコマンドをつかうことで、新しいバージョンをインストールして利用可能になります。Default GemはRubyと一緒にインストールされるライブラリをGemをつかって更新する仕組みととらえることができます。Default Gemの例としては 🌟TODO があります。🌟Gemfileに書かなくてもgem installだけでつかえる？
+
+Bundled GemはRubyと一緒にインストールされるGemです。一緒にインストールされているだけなので、BundlerでBundled GemをつかうときにはGemfileへ追記が必要です。Bundled GemにRubyインストール時よりも新しいバージョンが提供されていれば、BundlerやRubyGemsをつかって新しいバージョンをつかうことができます。
+
+Bundled GemはRubyコアチームによって管理されている安心感があります。新しいバージョンのRubyではいくつかのGemで動かなくなる問題がときどき起こりますが、Bundled GemはRubyコアチームによる開発プロセス中である程度の動作確認が行われていることが期待できます。Bundled Gemの例としては 🌟TODO があります。
