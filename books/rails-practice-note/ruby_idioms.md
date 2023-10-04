@@ -1,8 +1,8 @@
 ---
-title: "[Ruby基礎] Rubyコードの慣用句"
+title: "[Ruby基礎] Rubyコードの慣用句とRubyの知識"
 ---
 
-# Rubyコードの慣用句
+# Rubyコードの慣用句とRubyの知識
 
 ## !!
 
@@ -554,16 +554,20 @@ p x #=> 1
 p x #=> 1
 ```
 
-## Rubyのライブラリ分類とDefault Gem, Bundled Gem
+## RubyのライブラリとDefault gems、Bundled gems
 
-Rubyのライブラリにはデフォルトでインストールされているスタンダードライブラリと、主にあとからインストールする用途でつかうGemとがあります。
+Rubyのライブラリにはデフォルトでインストールされている組み込みライブラリと標準添付ライブラリ、そして主にあとからインストールする用途でつかうGemがあります。
 
-Rubyがデフォルトでインストールしているライブラリはスタンダードライブラリと呼ばれ、組み込みライブラリと標準添付ライブラリの2種類があります。組み込みライブラリはRubyと一緒にインストールされていて、requireを書かなくてもつかうことができるクラス群です。例としてはArray、Hash、String などがあります。標準添付ライブラリはRubyと一緒にインストールされていて、requireを書いてつかうクラス群です。例としてはJSON、YAML、OpenSSLなどがあります。
+組み込みライブラリはRubyと一緒にインストールされていて、requireを書かなくてもつかうことができるクラス群です。例としてはArray、Hash、Stringなどがあります。標準添付ライブラリはRubyと一緒にインストールされていて、requireを書いてつかうクラス群です。例としてはJSON、YAML、OpenSSLなどがあります。
 
 GemはRubyGems(gemコマンド)やBunlder(bundleコマンド)でインストールするライブラリで、BundlerでつかうときにはGemfileに追記して、必要に応じてrequireしてつかいます。[RubyGems.org](https://rubygems.org)で利用できるGemの一覧を見ることができます。例としてはRedis GemやRack Gemなどがあり、Railsも複数のGemの集合体です。
 
-ここまで説明してきたように、スタンダードライブラリ（組み込みライブラリと標準添付ライブラリ）はRubyと一緒にインストールされます。これらのライブラリにたとえば脆弱性を修正するようなリリースがあったときに、Rubyのバージョンを上げるよりも、そのライブラリだけをバージョンアップできた方が便利です。
+ここまで説明してきたように、組み込みライブラリと標準添付ライブラリはRubyと一緒にインストールされます。これらのライブラリにたとえば脆弱性を修正するようなリリースがあったときに、Rubyのバージョンを上げるよりも、そのライブラリだけをバージョンアップできた方が便利です。
 
-スタンダードライブラリの一部はDefault Gemという仕組みで提供されていて、RubyGemsの仕組みをつかってライブラリ単体でバージョンアップすることが可能です。Default Gemで提供されているライブラリは、RubyGemsのgemコマンドや、Gemfileに追記してBunlderのbundleコマンドをつかうことで、新しいバージョンをインストールして利用可能になります。Default GemはRubyと一緒にインストールされるライブラリをGemをつかって更新する仕組みととらえることができます。また、Default Gemはアンインストールできません。Default Gemの例としては 🌟TODO があります。🌟Gemfileに書かなくてもgem installだけでつかえる？
+組み込みライブラリと標準添付ライブラリの多くはDefault gemsという仕組みで提供されていて、RubyGemsの仕組みをつかってライブラリ単体でバージョンアップすることができます。RubyGemsのgemコマンドや、Gemfileに追記してBunlderのbundleコマンドをつかうことで、Default gemsで提供されているライブラリは新しいバージョンをインストールして利用可能になります。Default gemsはRubyと一緒にインストールされるライブラリをGemをつかって更新する仕組みととらえることができます。また、Default gemsはアンインストールできません。Default gemsの例としてはTime、URI、YAMLなどがあります。
 
-Bundled GemはRubyと一緒にインストールされるGemです。一緒にインストールされているだけで、一般のGem(Default Gemでもなく、Bundled Gemでもないもの)と同じ扱いです。Bundled GemはRubyコアチームによって管理されている安心感があります。新しいバージョンのRubyではいくつかのGemで動かなくなる問題が起こることもありますが、Bundled GemはRubyコアチームによる開発プロセス中である程度の動作確認が行われていることが期待できます。Bundled GemをBundlerでつかうときにはGemfileへ追記が必要です。Rubyインストール時よりも新しいバージョンのBundled Gemが提供されていれば、BundlerやRubyGemsをつかって新しいバージョンをつかうことができます。Bundled Gemの例としては 🌟TODO があります。
+Bundled gemsはRubyと一緒にインストールされるGemです。一緒にインストールされているだけでBundlerで特別扱いされることはなく、Bundled gemsをBundlerでつかうときには一般のGem(Default gemsでもなく、Bundled gemsでもないもの)と同様にGemfileへ追記が必要です。Rubyインストール時よりも新しいバージョンのBundled gemsが提供されていれば、BundlerやRubyGemsをつかって新しいバージョンをつかうことができます。Bundled gemsはアンインストールすることもできます。Bundled gemsの例としてはRake、TypeProfなどがあります。
+
+- 参考資料
+  - [Ruby Standard Library](https://docs.ruby-lang.org/en/master/standard_library_rdoc.html)
+
