@@ -131,6 +131,90 @@ foo.instance_eval{ bar(1, 2) }
 foo.send(:bar, 1, 2)
 ```
 
+## メソッドの前後に処理を差し込む
+
+次のコードのようにどこかでFooクラスにfooメソッドが定義されているとします。
+
+```ruby
+class Foo
+  def foo
+    p "foo method" # 実行されたことがわかりやすいサンプルコード
+  end
+end
+
+Foo.new.foo #=> "foo method"
+```
+
+このメソッドの前後に処理を挟んでデバッグしたいときにはprependメソッドをつかうと便利です。prependメソッドはメソッド呼び出しツリー中の実行順がより早い方に新しいメソッドを差し込むことができます。prependメソッドの引数にモジュール名を渡すと、モジュールに定義された各インスタンスメソッドを実行順がより早い方へそれぞれ差し込みます。
+
+```ruby
+module Debugging
+  def foo # prepend Debugging されると、定義済みfooメソッドの呼び出し順手前にこのメソッドを呼ぶ
+    p "in Debugging module"
+    super # 元のfooメソッドを呼ぶ
+  end
+end
+
+class Foo
+  prepend Debugging
+  def foo
+    p "foo method"
+  end
+end
+
+Foo.new.foo #=> "in Debugging module"
+```
+
+Fooクラスのfooメソッドより前にDebuggingモジュールのfooメソッドが呼ばれるようになります。superを書けば元のfooメソッドも呼ぶことができます。
+
+Fooクラスをレシーバとしてprependメソッドを書くこともできます。
+
+```ruby
+# たとえばこのクラスはどこかのGemに書かれている
+class Foo
+  def foo
+    p "foo method"
+  end
+end
+
+module Debugging
+  def foo
+    p "before"
+    super
+    p "after"
+  end
+end
+
+# このコードは自分のアプリ側に書ける
+Foo.prepend(Debugging)
+Foo.new.foo #=> "before", "foo method", "after"
+```
+
+ここまでに書いたコードではモジュールを定義するために名前をつけていましたが、名前をつけずにモジュールをつくることもできます。
+
+```ruby
+class Foo
+  def foo
+    p "foo method"
+  end
+end
+
+debugging_module = Module.new do
+  def foo
+    p "before"
+    super
+    p "after"
+  end
+end
+
+Foo.prepend(debugging_module)
+# がんばって1行で書くこともできます
+# Foo.prepend(Module.new{ def foo; p("before"); super; p("after"); end })
+Foo.new.foo #=> "before", "foo method", "after"
+```
+
+Railsアプリでは多くの場合、config/initializers/ フォルダ以下にファイルを置いて動かすことでメソッドを差し込むことができますが、ロード前のクラスに対しては実行できないことには注意してください。
+
 ## インスタンス変数を取得する
 
 オブジェクトがどんなインスタンス変数を持っているかをinstance_variablesメソッドとinstance_variable_getメソッドをつかって調べることができます。
