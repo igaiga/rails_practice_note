@@ -55,6 +55,10 @@ Railsアプリを書いているときに迷うケースとして、複数のモ
 
 - [楽々ERDレッスン 第1回：「お持ち帰りご注文用紙」編](https://codezine.jp/article/detail/154)
 
+イベント型エンティティ（本資料でイベント型モデルと書いているもの）とRailsでの設計については諸橋さんの講演資料 "Simplicity on Rails: RDB, REST and Ruby" にわかりやすく説明されています。
+
+- [Simplicity on Rails: RDB, REST and Ruby](https://speakerdeck.com/moro/simplicity-on-rails-rdb-rest-and-ruby)
+
 また、イベント型テーブルとモデルなど、Railsアプリにおける設計についてはtexta.fmポッドキャストにて詳しく説明されています。
 
 - [texta.fm](https://open.spotify.com/show/2BdZHve9cIU6c8OFyz7LeB)
