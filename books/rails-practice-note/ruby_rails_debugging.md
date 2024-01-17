@@ -554,6 +554,55 @@ payloadにはイベントごとの情報が格納されたHashオブジェクト
 
 - https://api.rubyonrails.org/classes/ActiveSupport/Notifications.html
 
+## ActiveRecord::QueryLogs
+
+ActiveRecord::QueryLogsはRails7.0で入った、SQL発行時のログに情報を付与する機能です。以下のログの `/*action='index',application='YourAppName',controller='books'*/` 部分を出力する機能です。
+
+```
+Book Load (0.0ms)  SELECT "books".* FROM "books" /*action='index',application='YourAppName',controller='books'*/
+```
+
+デフォルトではオフになっていて、たとえばconfig/application.rbに以下の設定を追加することで有効にできます。productionモードでも他のモードでもつかえます。
+
+```config/application.rb
+config.active_record.query_log_tags_enabled = true
+```
+
+出力内容をカスタマイズすることもできます。設定方法は次の資料が参考になります。
+
+- 参考資料
+  - ActiveRecord::QueryLogs https://api.rubyonrails.org/classes/ActiveRecord/QueryLogs.html
+  - Railsガイド Railsアプリケーションのデバッグ SQLクエリコメント https://railsguides.jp/debugging_rails_applications.html
+
+また、リクエスト中とジョブ中でコンテキストが変更されないようなケースでは、`config.active_record.cache_query_log_tags` 設定を加えるとキャッシュが有効になります。デフォルトはオフです。
+
+```
+config.active_record.cache_query_log_tags = true
+```
+
+別の似た機能で Verbose Query Logs という、developmentモードでSQLを発行しているコード場所をログ表示する機能もあります。
+
+```
+Article Load (0.2ms)  SELECT "articles".* FROM "articles"
+↳ app/models/article.rb:5 ⬅️ この部分
+```
+
+これはRails5.2以降でdevelopmentモードのみでデフォルト有効になっています。
+
+config/environments/development.rb
+
+```config/environments/development.rb
+config.active_record.verbose_query_logs = true
+```
+
+productionモードではメモリをたくさんつかってしまうため非推奨で、代わりに前述のActiveRecord::QueryLogsをつかうことが推奨されています。
+
+- https://guides.rubyonrails.org/debugging_rails_applications.html#verbose-query-logs
+
+"We recommend against using this setting in production environments. It relies on Ruby's Kernel#caller method which tends to allocate a lot of memory in order to generate stacktraces of method calls. Use query log tags (see below) instead."
+
+
+
 ## 参考資料
 
 - I am a puts debuggerer
