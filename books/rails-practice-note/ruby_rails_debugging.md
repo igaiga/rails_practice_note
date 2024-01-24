@@ -568,7 +568,38 @@ Book Load (0.0ms)  SELECT "books".* FROM "books" /*action='index',application='Y
 config.active_record.query_log_tags_enabled = true
 ```
 
-出力内容をカスタマイズすることもできます。設定方法は次の資料が参考になります。
+出力内容をカスタマイズすることもできます。次の設定はコントローラ名、アクション名、database.ymlのDB名を出力します。DB名の`%2F`は`/`をエスケープした文字列です。
+
+```config/application.rb
+config.active_record.query_log_tags = [
+  :namespaced_controller,
+  :action,
+  :database
+]
+```
+
+```
+Book Load (0.0ms)  SELECT "books".* FROM "books" /*action='index',database='storage%2Fdevelopment.sqlite3',namespaced_controller='books'*/
+```
+
+設定には任意のRubyコードを書くことができます。次の設定ではコントローラ名とアクション名に加えてリクエストIDと静的な文字列を出力します。
+
+```config/application.rb
+config.active_record.query_log_tags = [
+  :namespaced_controller,
+  :action,
+  {
+    request_id: ->(context) { context[:controller]&.request&.request_id },
+    static: "foo",
+  }
+]
+```
+
+```
+Book Load (0.0ms)  SELECT "books".* FROM "books" /*action='index',namespaced_controller='books',request_id='a143663d-880b-4039-a423-4c22b1eacb02',static='foo'*/
+```
+
+カスタマイズの設定方法は次の資料が参考になります。
 
 - 参考資料
   - ActiveRecord::QueryLogs https://api.rubyonrails.org/classes/ActiveRecord/QueryLogs.html
