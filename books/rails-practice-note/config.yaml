@@ -21,6 +21,7 @@ chapters:
   - ruby_rails_debugging
   - ruby_rails_debug_gem
   - ruby_rails_vscode
+  - rails_db_modeling_workshop
   - rails_rspec_workshop
   - rails_graphql_workshop
   - rails_rubocop_custom_cop
