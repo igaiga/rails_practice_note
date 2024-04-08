@@ -1,8 +1,8 @@
 ---
-title: "[Ruby基礎] Rubyコードの慣用句とRubyの知識"
+title: "[Ruby基礎] Rubyの知識"
 ---
 
-# Rubyコードの慣用句とRubyの知識
+# Rubyの知識
 
 ## !!
 

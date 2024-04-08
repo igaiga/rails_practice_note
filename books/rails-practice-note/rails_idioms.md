@@ -1,8 +1,8 @@
 ---
-title: "[Rails基礎] Railsコードの慣用句"
+title: "[Rails基礎] Railsの知識"
 ---
 
-# Railsコードの慣用句
+# Railsの知識
 
 ## blank?, present?, empty?
 

@@ -1,7 +1,7 @@
 ---
-title: "[ActiveRecord] ActiveRecordの便利な道具"
+title: "[ActiveRecord] ActiveRecordの知識"
 ---
-# [ActiveRecord] ActiveRecordの便利な道具
+# [ActiveRecord] ActiveRecordの知識
 
 ## 関連先を指定するjoinsメソッド、whereメソッドの書き方
 
