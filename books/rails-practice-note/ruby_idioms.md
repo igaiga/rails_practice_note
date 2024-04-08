@@ -191,6 +191,53 @@ p x&.upcase #=> nil
 123.try(:upcase) #=> nil
 ```
 
+## selfを省略できないケース
+
+selfを省略できるとき、ほとんどのケースで省略することが一般的です。
+
+```ruby
+class Foo
+  def foo
+    "foo!"
+  end
+  def foo2
+    # fooメソッドを呼び出すとき、 self.foo と書くよりも、selfを省略して foo と書く方が一般的
+    foo
+  end
+end
+puts Foo.new.foo2 #=> "foo!"
+```
+
+fooメソッドを呼び出すとき、 `self.foo` と書くよりも、selfを省略して `foo` と書く方が一般的です。
+
+selfを省略できない注意が必要なケースは、ローカル変数への代入と見分けがつかなくなるときです。次のようなコードです。
+
+```ruby
+class Foo
+  def foo=(arg)
+    @foo = arg
+  end
+  def set_foo
+    foo = 1 # ローカル変数fooへ代入
+    self.foo = 2 # foo=メソッドの呼び出し
+  end
+end
+```
+
+`foo = 1` と書くとfoo=メソッドの呼び出しではなく、ローカル変数fooへの代入になります。foo=メソッドを呼び出したいときは`self.foo = 2` と書きます。このサンプルコードのfoo=メソッドのように自分で定義しているときは気づきやすいですが、Railsのモデルクラスや、Rubyのattr_writerメソッドのように直接書かれていないこともあるので注意です。
+
+次のサンプルコードはRailsのモデルクラスでの例です。
+
+```ruby
+class User < ApplicationRecord
+  # usersテーブルにカラムnameがあるとき
+  def set_name
+    name = "igaiga" # ローカル変数nameへ代入
+    self.name = "igaiga" # name=メソッドの呼び出し(usersテーブルのカラムnameへ代入)
+  end
+end
+```
+
 ## super
 
 superはメソッド探索順で次の順序である同名メソッドを呼び出します。
