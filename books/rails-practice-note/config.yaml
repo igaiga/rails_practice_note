@@ -8,16 +8,16 @@ chapters:
   - preface
   - ar_usefuls
   - ar_inverse_of
-  - ar_transaction_lock
   - ar_sql_injection
+  - ar_transaction_lock
   - ar_delegated_type
   - ar_processing_across_multiple_models
-  - ruby_rails_references
   - rack_middleware_and_rack
   - remaining_variables
   - rails_idioms
   - ruby_idioms
   - ruby_argument_literals
+  - ruby_rails_references
   - ruby_rails_debugging
   - ruby_rails_debug_gem
   - ruby_rails_vscode
