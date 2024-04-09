@@ -843,28 +843,29 @@ FactoryBot.define do
     # 追加
     trait :with_variations do
       after(:create) do |book|
-        book.variations.create!(kind: "paper book")
+        create_list(:variation, 2, book: book)
       end
     end
   end
 end
 ```
 
-- 次の3つの書き方でfactoryを生成できます
+- 次の書き方でモデルオブジェクトをつくることができます
 - `FactoryBot.create(:book)` : traitなしのベース部分だけでfactoryを生成する
   - = 関連なしのオブジェクトをつくる
 - `FactoryBot.create(:book, :with_variations)`: ベース部分に加えて `trait :with_variations` ブロックも実行する
   - = 関連先も一緒につくる
-- `FactoryBot.create(:book, variations: [pdf_variation])`: variationsにpdf_variationを指定
-  - pdf_variationはあらかじめ作成されたVariationオブジェクト: `pdf_variation = Variation.find_by(kind: "PDF")`
+  - ここではcreate_listメソッドでvariation factoryをつかって2つのレコードをつくる指示をしています
+  - variationのfactoryをつかわずに `book.variations.create!(kind: "paper book")` などで書くこともできます
+- `FactoryBot.create(:book, variations: [FactoryBot.build(:variation)])`: variationsを呼び出し側でつくって指定
   - = 関連先を呼び出し側でつくって渡す
 
 ```console
 irb> book = FactoryBot.create(:book, :with_variations)
 irb> book
-=> <Book id: 6, title: "RubyBook", author: "matz", created_at: "2021-05-26 09:47:06.869090000 +0000", updated_at: "2021-05-26 09:47:06.869090000 +0000">
+=> <Book id: 1, title: "RubyBook", author: "matz", created_at: "2021-05-26 09:47:06.869090000 +0000", updated_at: "2021-05-26 09:47:06.869090000 +0000">
 irb> book.variations
-=> [#<Variation id: 3, kind: "paper book", book_id: 6, created_at: "2021-05-26 09:47:06.874868000 +0000", updated_at: "2021-05-26 09:47:06.874868000 +0000">]
+=> [#<Variation id: 1, kind: "PDF", book_id: 1, created_at: "2021-05-26 09:47:06.874868000 +0000", updated_at: "2021-05-26 09:47:06.874868000 +0000">, #<Variation id: 2, kind: "PDF", book_id: 1, created_at: "2021-05-26 09:47:06.874868000 +0000", updated_at: "2021-05-26 09:47:06.874868000 +0000">]
 ```
 
 ### belogs_to関連でのつかい方の例
@@ -886,13 +887,13 @@ FactoryBot.define do
 end
 ```
 
-- 次の書き方でfactoryを生成できます
-- `FactoryBot.create(:variation)` : traitなしのベース部分だけでfactoryを生成する
+- 次の書き方でモデルオブジェクトをつくることができます
+- `FactoryBot.build(:variation)` : traitなしのベース部分だけでfactoryを生成する
   - = 関連なしのオブジェクトをつくる
-  - 今回の例ではbook関連が必須なのでバリデーションエラーになります
+  - `FactoryBot.create(:variation)`とすると、今回の例ではbook関連が必須なのでバリデーションエラーになります
 - `FactoryBot.create(:variation, :with_book)`: ベース部分に加えて `trait :with_book` ブロックも実行する
   - = 関連先も一緒につくる
-- `FactoryBot.create(:variation, book: FactoryBot.create(:book))`: bookにFactoryBot.create(:book)でつくったオブジェクトを指定
+- `FactoryBot.create(:variation, book: FactoryBot.build(:book))`: bookにFactoryBot.build(:book)でつくったオブジェクトを指定
   - = 関連先を呼び出し側でつくって渡す
 
 ## シーケンス
