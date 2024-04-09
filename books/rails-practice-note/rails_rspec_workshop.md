@@ -826,7 +826,11 @@ irb> variation.book
 - traitはfactory定義に別パターンの生成方法を書くことができる機能です
   - https://github.com/thoughtbot/factory_bot/blob/master/GETTING_STARTED.md#traits
 - factory定義に関連を書きたい場合にはtraitをつかうのがお勧めです
-- Bookモデルに関連先variationsがあるサンプルコード
+  - traitをつかわずに関連先を必ずつくるように書いてしまうと、メンテナンスが難しくなるためです
+
+### has_many関連でのつかい方の例
+
+- Bookモデルにhas_many関連variationsがあるサンプルコード
 
 spec/factories/books.rb
 ```ruby
@@ -841,9 +845,6 @@ FactoryBot.define do
       after(:create) do |book|
         book.variations.create!(kind: "paper book")
       end
-      # （動作未確認）上のafterメソッドの代わりに、関連先のFactoryBotがあればこう書ける。
-      # こちらだとFactoryBot.build時に関連先もbuildで作成できるかも。
-      # FactoryBot.create_list(:variations, count, book: book)
     end
   end
 end
@@ -855,8 +856,8 @@ end
 - `FactoryBot.create(:book, :with_variations)`: ベース部分に加えて `trait :with_variations` ブロックも実行する
   - = 関連先も一緒につくる
 - `FactoryBot.create(:book, variations: [pdf_variation])`: variationsにpdf_variationを指定
-  - pdf_variationはあらかじめ作成されたVariationインスタンス: `pdf_variation = Variation.find_by(kind: "PDF")`
-  - = 関連先を指定する
+  - pdf_variationはあらかじめ作成されたVariationオブジェクト: `pdf_variation = Variation.find_by(kind: "PDF")`
+  - = 関連先を呼び出し側でつくって渡す
 
 ```console
 irb> book = FactoryBot.create(:book, :with_variations)
@@ -865,6 +866,34 @@ irb> book
 irb> book.variations
 => [#<Variation id: 3, kind: "paper book", book_id: 6, created_at: "2021-05-26 09:47:06.874868000 +0000", updated_at: "2021-05-26 09:47:06.874868000 +0000">]
 ```
+
+### belogs_to関連でのつかい方の例
+
+- Variationモデルにbelogs_to関連bookがあるサンプルコード
+  - 先ほどのBookモデルとVariationモデルの関係をVariationモデル側から見たときに相当します
+- traitブロックにbook関連をassociationをつかって書くと、create時にはbookをcreateし、build時にはbookをbuildしてくれます。
+
+spec/factories/variations.rb
+
+```ruby
+FactoryBot.define do
+  factory :variation do
+    kind { "PDF" }
+    trait :with_book do
+      book { association :book }
+    end
+  end
+end
+```
+
+- 次の書き方でfactoryを生成できます
+- `FactoryBot.create(:variation)` : traitなしのベース部分だけでfactoryを生成する
+  - = 関連なしのオブジェクトをつくる
+  - 今回の例ではbook関連が必須なのでバリデーションエラーになります
+- `FactoryBot.create(:variation, :with_book)`: ベース部分に加えて `trait :with_book` ブロックも実行する
+  - = 関連先も一緒につくる
+- `FactoryBot.create(:variation, book: FactoryBot.create(:book))`: bookにFactoryBot.create(:book)でつくったオブジェクトを指定
+  - = 関連先を呼び出し側でつくって渡す
 
 ## シーケンス
 
