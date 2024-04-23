@@ -131,7 +131,7 @@ end
     - booksのCRUDをするアプリです
     - テスト対象コードをテストコードと対比してプロダクションコードと呼びます
 - $ bin/rails g scaffold books title author
-    - rspecやfactorybotのひな形もつくってくれます
+    - rspecやfactory_botのひな形もつくってくれます
 - $ bin/rails db:migrate
 - イメージをつかみたい人はrails sしていじってみてください
 - 今回、Viewのテストは書かないので、作成されている場合は削除しておきます
@@ -757,7 +757,7 @@ end
 ## factory_botの定義ファイルからモデルデータをつくる
 
 - `FactoryBot.create(:book)` でDBにレコードを作成して、モデルオブジェクトを得られます
-- rails consoleからも試行できます
+- rails consoleからも試すことができます
 
 ```console
 $ bin/rails c
@@ -767,9 +767,16 @@ irb> book
 ```
 
 - DBにレコードを生成せずにモデルオブジェクトだけを作成したいときはbuildメソッドがつかえます
-  - createメソッドの替わりにbuildメソッドをつかうとDB保存せずモデルオブジェクトをつくります
   - `FactoryBot.build(:book)`
-- factory_botドキュメントも参考になります: https://github.com/thoughtbot/factory_bot/wiki
+
+```console
+$ bin/rails c
+irb> book = FactoryBot.build(:book)
+irb> book
+=> #<Book:0x... id: nil, title: "RubyBook", author: "matz", created_at: nil, updated_at: nil>
+```
+
+- factory_botのドキュメントも参考になります: https://github.com/thoughtbot/factory_bot/wiki
 
 ## 関連を持った定義ファイルを書く
 
@@ -801,7 +808,7 @@ FactoryBot.define do
 end
 ```
 
-- rails consoleから実行
+- rails consoleから次のように実行してみましょう
 
 ```console
 $ bin/rails c
@@ -815,11 +822,11 @@ irb> variation.book
 => #<Book id: 3, title: "RubyBook", memo: "Good", created_at: "2020-07-07 04:29:51", updated_at: "2020-07-07 04:29:51">
 ```
 
-- 関連はオブジェクト生成時に関連づけるのがお勧めです
-- factory定義に関連を持たせることもできますが、メンテナンスがすごくすごく難しいです
-  - spec/factories/variations.rb ※1 の行 `book { nil }` の部分
-  - モデルが増えて関連が絡みあってきたときに書きづらくなっていくため
-- または次に紹介するtraitを利用するのがお勧めです
+- factory定義に関連を直書きすることもできますが、メンテナンスがすごくすごく難しいです
+  - spec/factories/variations.rb ※1 の行 `book { nil }` の部分を`book`や`book { association :book }` と書くようなfactory定義はお勧めしません
+  - モデルが増えて関連が増えてきたときに書きづらくなっていくため
+- factory定義に関連を書くには、次に紹介するtraitを利用するのがお勧めです
+- または、factory定義には関連を書かないでおいて、`FactoryBot.create(:variation, book: FactoryBot.create(:book))` のようにオブジェクト生成時に組み立てるのも良いでしょう
 
 ## trait
 
@@ -827,6 +834,33 @@ irb> variation.book
   - https://github.com/thoughtbot/factory_bot/blob/master/GETTING_STARTED.md#traits
 - factory定義に関連を書きたい場合にはtraitをつかうのがお勧めです
   - traitをつかわずに関連先を必ずつくるように書いてしまうと、メンテナンスが難しくなるためです
+
+### belogs_to関連でのつかい方の例
+
+- Variationモデルにbelogs_to関連bookがあるサンプルコード
+- traitブロックにbook関連をassociationをつかって書くと、create時にはbookをcreateし、build時にはbookをbuildしてくれます。
+
+spec/factories/variations.rb
+
+```ruby
+FactoryBot.define do
+  factory :variation do
+    kind { "PDF" }
+    trait :with_book do
+      book { association :book }
+    end
+  end
+end
+```
+
+- 次の書き方でモデルオブジェクトをつくることができます
+- `FactoryBot.build(:variation)` : traitなしのベース部分だけでfactoryを生成する
+  - = 関連なしのオブジェクトをつくる
+  - `FactoryBot.create(:variation)`とすると、今回の例ではbook関連が必須なのでバリデーションエラーになります
+- `FactoryBot.create(:variation, :with_book)`: ベース部分に加えて `trait :with_book` ブロックも実行する
+  - = 関連先も一緒につくる
+- `FactoryBot.create(:variation, book: FactoryBot.build(:book))`: bookにFactoryBot.build(:book)でつくったオブジェクトを指定
+  - = 関連先を呼び出し側でつくって渡す
 
 ### has_many関連でのつかい方の例
 
@@ -867,34 +901,6 @@ irb> book
 irb> book.variations
 => [#<Variation id: 1, kind: "PDF", book_id: 1, created_at: "2021-05-26 09:47:06.874868000 +0000", updated_at: "2021-05-26 09:47:06.874868000 +0000">, #<Variation id: 2, kind: "PDF", book_id: 1, created_at: "2021-05-26 09:47:06.874868000 +0000", updated_at: "2021-05-26 09:47:06.874868000 +0000">]
 ```
-
-### belogs_to関連でのつかい方の例
-
-- Variationモデルにbelogs_to関連bookがあるサンプルコード
-  - 先ほどのBookモデルとVariationモデルの関係をVariationモデル側から見たときに相当します
-- traitブロックにbook関連をassociationをつかって書くと、create時にはbookをcreateし、build時にはbookをbuildしてくれます。
-
-spec/factories/variations.rb
-
-```ruby
-FactoryBot.define do
-  factory :variation do
-    kind { "PDF" }
-    trait :with_book do
-      book { association :book }
-    end
-  end
-end
-```
-
-- 次の書き方でモデルオブジェクトをつくることができます
-- `FactoryBot.build(:variation)` : traitなしのベース部分だけでfactoryを生成する
-  - = 関連なしのオブジェクトをつくる
-  - `FactoryBot.create(:variation)`とすると、今回の例ではbook関連が必須なのでバリデーションエラーになります
-- `FactoryBot.create(:variation, :with_book)`: ベース部分に加えて `trait :with_book` ブロックも実行する
-  - = 関連先も一緒につくる
-- `FactoryBot.create(:variation, book: FactoryBot.build(:book))`: bookにFactoryBot.build(:book)でつくったオブジェクトを指定
-  - = 関連先を呼び出し側でつくって渡す
 
 ## シーケンス
 
