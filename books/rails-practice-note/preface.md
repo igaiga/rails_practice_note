@@ -21,7 +21,11 @@ title: "はじめに、謝辞、執筆スポンサーの募集、機械学習へ
 
 # 謝辞
 
-株式会社iCAREのみなさんとのペアプロでいただいた質問と対話から、本資料の多くのネタを得ることができ、また、説明のための資料執筆を通じてご支援いただきました。深く感謝いたします。
+株式会社iCARE様のみなさまとのペアプロでいただいた質問と対話から、「Railsの練習帳」に書いた多くの知見を得ることができ、また、説明のための資料執筆を通じてご支援いただきました。
+
+GMOペパボ株式会社様において新人研修[「DBモデリング基礎講座」](https://github.com/pepabo/training/blob/master/workshop/db_modeling/db_modeling.md)および[「RSpec基礎講座」](https://github.com/pepabo/training/blob/master/workshop/rspec/rspec.md) の講師をさせていただき、つかった資料をベースに更新を加えて「Railsの練習帳」にて公開させていただいています。
+
+深く感謝いたします。
 
 # 執筆スポンサーの募集
 
