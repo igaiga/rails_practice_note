@@ -1014,6 +1014,17 @@ end
 - and_returnで戻り値を指定するのではなく、そのメソッドの処理をブロックで書くこともできます。
   - `allow(book).to receive(:lucky?){ some_method }`
   - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/configuring-responses/block-implementation
+- 引数を指定するときはwithメソッドをつかいます
+  - allow(対象のオブジェクト).to receive(メソッド名のシンボル).with(引数).and_return(戻り値)
+  - 例として、環境変数を取得するENV#fetchメソッドをモックするには `allow(ENV).to receive(:fetch).with("HOME").and_return("/Users/igarashi")` となります
+  - 注意が必要なのは、このコードではENV#fetchメソッドに`"HOME"`以外の引数を渡すと`received :fetch with unexpected arguments (RSpec::Mocks::MockExpectationError)` エラーになることです
+  - 指定した引数だけモック化し、そのほかの引数では元のコードを実行したいときはand_call_originalメソッドをつかって次のように書きます
+
+```ruby
+allow(ENV).to receive(:fetch).and_call_original
+allow(ENV).to receive(:fetch).with("HOME").and_return("/Users/igarashi")
+```
+
 - and_return以外にもこんな道具が用意されています
   - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/configuring-responses
 - allowメソッドのドキュメント
