@@ -618,3 +618,13 @@ Bundled gemsは最初に説明した3種類の最後の Gem と同じですが�
 - 参考資料
   - [Ruby Standard Library](https://docs.ruby-lang.org/en/master/standard_library_rdoc.html)
 
+## deprecatedカテゴリのWarningを出力する
+
+deprecated カテゴリのWarningはデフォルトで出力されません。（Ruby2.7.1から2.7.2へのバージョンアップでデフォルトでは出力されなくなる仕様変更がありました。）deprecated カテゴリのWarningを出力するときは次のようにオプションを指定します。RUBYOPT環境変数をつかうとrspecコマンドなどでRubyに対してオプションを指定できます。
+
+```
+$ ruby -W:deprecated foo.rb
+$ RUBYOPT='-W:deprecated' bin/rspec spec/foo_spec.rb
+```
+
+また、 `-W:deprecated` の代わりに `-W` と書くとさらに広い範囲で全ての警告を表示します。

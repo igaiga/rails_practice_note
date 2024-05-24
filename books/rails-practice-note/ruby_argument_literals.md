@@ -258,7 +258,7 @@ Ruby3.0とRuby2.7でキーワード引数に関する非互換な仕様整理が
 
 [Separation of positional and keyword arguments in Ruby 3.0](https://www.ruby-lang.org/en/news/2019/12/12/separation-of-positional-and-keyword-arguments-in-ruby-3-0/)
 
-また、キーワード引数の仕様変更とは直接関係ないですが、Ruby2.7.1から2.7.2へのバージョンアップでdeprecated カテゴリのWarningはデフォルトで出力されなくなる変更が入っています。Warningを出力するときは、次のようにオプションを指定します。 `-W:deprecated` の代わりに `-W` と書くとさらに広い範囲で全ての警告を表示します。
+また、キーワード引数の仕様変更とは直接関係ないですが、Ruby2.7.1から2.7.2へのバージョンアップでdeprecated カテゴリのWarningはデフォルトで出力されなくなる変更が入っています。Warningを出力するときのオプション指定方法は以下の通りです。詳しくは[「Rubyの知識」](./ruby_idioms)のページの「deprecatedカテゴリのWarningを出力する」に書いてあります。
 
 ```
 $ ruby -W:deprecated foo.rb
