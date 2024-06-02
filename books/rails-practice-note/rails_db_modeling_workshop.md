@@ -70,42 +70,30 @@ title: "[Rails基礎] DBモデリング基礎講座"
   - テーブル名はitemsとします
   - 「ほうれん草のソテー」や「マルゲリータピザ」などがデータとして入ります
 
-
-
 ## 各テーブルのカラムを入れる
 
 - 各テーブルのカラム名を入れる
-    - カラム名はExcel表では列名に対応します
-    - カラム名は主に名詞で名付けますが、形容詞(例: available)がうまくつかえる場面もあります
-
-
+  - カラム名はExcel表では列名に対応します
+  - カラム名は主に名詞で名付けますが、形容詞(例: available)がうまくつかえる場面もあります
 
 - items(商品)テーブル
-    - code(商品番号) varchar型
-      - 「11 ほうれん草のソテー」の"11"を商品番号とします
-      - "01" といった表記にも対応できるのでvarchar型(文字列型)にしました
-      - integer型(数値型)でも良いかもしれません
-    - name(名前) varchar型
-    - price(金額) integer型
-
-
+  - code(商品番号) varchar型
+    - 「11 ほうれん草のソテー」の"11"を商品番号とします
+    - "01" といった表記にも対応できるのでvarchar型(文字列型)にしました
+    - integer型(数値型)でも良いかもしれません
+  - name(名前) varchar型
+  - price(金額) integer型
 
 - customers(顧客)テーブル
-    - name(名前) varchar型
-    - telephone_number(電話番号) varchar型
-
-- 電話注文をお勧めしているので、名前と電話番号があれば良いだろうと考えています
-
-
+  - name(名前) varchar型
+  - telephone_number(電話番号) varchar型
+  - 電話注文をお勧めしているので、名前と電話番号があれば良いだろうと考えています
 
 - orders(注文)テーブル
-    - count(注文個数) integer型
-
-- シンプルにするために、まずは1注文1商品のケースで設計しています
-    -  1注文複数商品への拡張もあとで考えてみましょう
-- 注文商品名とその金額は商品テーブルにあるのでこのテーブルにはなくて良いとします
-
-
+  - count(注文個数) integer型
+  - シンプルにするために、まずは1注文1商品のケースで設計しています
+    - 1注文複数商品への拡張もあとで考えてみましょう
+  - 注文商品名とその金額は商品テーブルにあるのでこのテーブルにはなくて良いとします
 
 ## 残ってる情報はあるか？
 
@@ -115,9 +103,7 @@ title: "[Rails基礎] DBモデリング基礎講座"
 - テーブル名はitem_categoriesとします
 - item_categories(商品カテゴリー)テーブル
   - name(名前) varchar型
-  - どの商品を含むかは関連で表現することにします  
-
-
+  - 各カテゴリーにどの商品を含むかは関連で表現することにします  
 
 ## 関連を入れる
 
@@ -129,9 +115,7 @@ title: "[Rails基礎] DBモデリング基礎講座"
   - 多側のテーブルに関連先テーブルidを持つ
 - 多対多(N:N) : どちらのテーブルからもお互いに1つのレコードが多くのレコードと組になる
   - 中間テーブルを作成して両方の関連先テーブルidを持つ
-
-
-
+- 関連のためのカラムを追加すると次のようになります
 - orders(注文)テーブル
   - count(注文個数) integer型
   - item_id bigint型
@@ -146,8 +130,6 @@ title: "[Rails基礎] DBモデリング基礎講座"
   - item_category_id bigint型
 - item_categories(商品カテゴリー)テーブル
   - name(名前) varchar型
-
-
 
 ## ER図で表現する
 
@@ -172,8 +154,6 @@ title: "[Rails基礎] DBモデリング基礎講座"
   - n:n(多対多)のときは両側に矢印がつく
   - UserとBookは1対多の関係、BookとTagは多対多の関係(中間テーブルbook_tags)
 
-
-
 ## カラムごとにDB制約を加えるかどうかを考える
 
 - DBの「制約」機能をつかうと、レコードとして許容できる値に制限をつけられる
@@ -191,16 +171,12 @@ title: "[Rails基礎] DBモデリング基礎講座"
 - 今日は説明しませんが値の範囲を制限する「check制約(検査制約)」もあります
 - 次のページから各制約をどのカラムに付けるかを考えていきます
 
-
-
 ##  一意性制約（ユニーク制約）
 
 - 指定されたカラムにおいて、テーブル内のレコードが一意になる(=重複しない)よう制約を課す
 - 以下に一意性制約をつけます
 - customers(顧客)テーブルのtelephone_number(電話番号)
 - items(商品)テーブルのcode(商品番号)
-
-
 
 ## 非NULL制約
 - そのカラムの値としてNULLを許可しない制約を課す
@@ -211,15 +187,11 @@ title: "[Rails基礎] DBモデリング基礎講座"
 - items(商品)テーブル: code(商品番号), name(名前), price(金額), item_category_id
 - item_categories(商品カテゴリー)テーブル: name(名前)
 
-
-
 ## 外部キー制約
 - 関連先レコードが必ず存在する制約を課す
 - 以下に外部キー制約をつけます
 - orders(注文)テーブルのitem_id, customer_id
 - items(商品)テーブルのitem_category_id
-
-
 
 ## カラムごとにデフォルト値をつけるかどうかを考える
 
@@ -227,12 +199,11 @@ title: "[Rails基礎] DBモデリング基礎講座"
 - カラムの値を指定せずにレコード作成したとき、デフォルト値が与えられる
 - 今回の題材では不要そうです
 
-
-
 ## 検索インデックスをつけるかどうかを考える
 
 - インデックス: RDBで検索を高速にするための仕組み
-  - 複数のカラムを組み合わせて検索するときに利用する「複合インデックス」もある
+  - 複数のカラムを組み合わせて検索するときに利用する「複合インデックス」もあります
+  - 一般に、インデックスをつけると検索は速くなりますが、挿入はやや遅くなります
 - 検索機能をつくるときに考えるとして、今はひとまずなしにします
 - customers(顧客)テーブルのtelephone_number(電話番号)にはあってもいいかも
 - items(商品)テーブルのcode(商品番号)にはあってもいいかも
@@ -240,12 +211,9 @@ title: "[Rails基礎] DBモデリング基礎講座"
   - Railsパフォーマンス・チューニング入門 https://slides.com/kokuyouwind/rails-performance-tuning
   - MySQLとインデックスと私 https://speakerdeck.com/yoku0825/mysqltoindetukusutosi
 
-
-
 ## できあがったテーブル設計をRailsアプリのmigrationファイルで書く
 
 - サンプルコード: https://github.com/igaiga/rails704_ruby312_erd_example
-
 
 ```ruby
 class CreateCustomers < ActiveRecord::Migration[7.0]
@@ -260,8 +228,6 @@ class CreateCustomers < ActiveRecord::Migration[7.0]
 end
 ```
 
-
-
 ```ruby
 class CreateItemCategories < ActiveRecord::Migration[7.0]
   def change
@@ -273,8 +239,6 @@ class CreateItemCategories < ActiveRecord::Migration[7.0]
   end
 end
 ```
-
-
 
 ```ruby
 class CreateItems < ActiveRecord::Migration[7.0]
@@ -291,8 +255,6 @@ class CreateItems < ActiveRecord::Migration[7.0]
 end
 ```
 
-
-
 ```ruby
 class CreateOrders < ActiveRecord::Migration[7.0]
   def change
@@ -307,37 +269,41 @@ class CreateOrders < ActiveRecord::Migration[7.0]
 end
 ```
 
-
-
  参考: モデル実装
 
-```app/models/customer.rb
+app/models/customer.rb
+
+```ruby
 class Customer < ApplicationRecord
   has_many :orders
 end
 ```
 
-```app/models/item_category.rb
+app/models/item_category.rb
+
+```
 class ItemCategory < ApplicationRecord
   has_many :items
 end
 ```
 
-```app/models/item.rb
+app/models/item.rb
+
+```ruby
 class Item < ApplicationRecord
   belongs_to :item_category
   has_many :orders
 end
 ```
 
-```app/models/order.rb
+app/models/order.rb
+
+```ruby
 class Order < ApplicationRecord
   belongs_to :item
   belongs_to :customer
 end
 ```
-
-
 
 ## 1注文1商品から1注文複数商品へ拡張
 
