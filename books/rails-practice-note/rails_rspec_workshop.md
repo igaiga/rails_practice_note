@@ -150,7 +150,7 @@ end
 - JSを動かしたいときはSystem spec、APIの場合はRequest specをつかうのがおすすめです
 - ほか、ActiveJobやActionMailerなど、Railsの各部品用テストが用意されています
     - 詳細: https://railsguides.jp/testing.html
-- Controller specやView specなどはE2Eテストで賄えるので、ほぼつかわれません
+- Controller specやView specなどはE2Eテストでカバーできるので、ほぼつかわれません
     - ややこしいですが、Controller spec(RSpec)とController test(minitest)は別物です
 
 ## Model specを書く - RSpecを実行してみる
@@ -161,7 +161,7 @@ end
 spec/models/book_spec.rb
 
 ```ruby
-require 'rails_helper' # 設定ファイルrails_helper.rbを読み込むコードが全テストにあります
+require "rails_helper" # 設定ファイルrails_helper.rbを読み込むコードが全テストにあります
 
 RSpec.describe Book, type: :model do # Bookモデルのテストコードをブロック内に書いていきます
   # ここにBookモデルのテストコードを書いていきます
@@ -198,7 +198,7 @@ end
 spec/models/book_spec.rb
 
 ```ruby
-require 'rails_helper'
+require "rails_helper"
 RSpec.describe Book, type: :model do
   it "trueであるとき、falseになること" do # itの後にNG時に表示される "説明文" を書く
     expect(true).to eq(false)
@@ -255,7 +255,7 @@ rspec ./spec/models/book_spec.rb:4
 spec/models/book_spec.rb
 
 ```ruby
-require 'rails_helper'
+require "rails_helper"
 RSpec.describe Book, type: :model do
   it "trueであるとき、trueになること" do
     expect(true).to eq(true)
@@ -304,7 +304,7 @@ end
 spec/models/book_spec.rb
 
 ```ruby
-require 'rails_helper'
+require "rails_helper"
 RSpec.describe Book, type: :model do
   describe "Book#title_with_author" do # describeメソッドをつかってメソッドごとに区切ると読みやすいです
     it "Book#title_with_authorを呼び出したとき、titleとauthorを結んだ文字列が返ること" do
@@ -322,7 +322,7 @@ end
 spec/models/book_spec.rb
 
 ```ruby
-require 'rails_helper'
+require "rails_helper"
 RSpec.describe Book, type: :model do
   describe "Book#title_with_author" do
     it "Book#title_with_authorを呼び出したとき、titleとauthorを結んだ文字列が返ること" do
@@ -389,7 +389,7 @@ end
     - describe, contextが入れ子構造になることもあります
 
 ```ruby
-require 'rails_helper'
+require "rails_helper"
 RSpec.describe Book, type: :model do
   describe "#.メソッド名" do
     context "○○なとき" do
@@ -587,7 +587,7 @@ Selenium::WebDriver::Error::SessionNotCreatedError:
 spec/rails_helper.rb
 
 ```ruby
-if ENV['WITH_HEAD'].present?
+if ENV["WITH_HEAD"].present?
   driven_by(:selenium_chrome)
 else
   driven_by(:selenium_chrome_headless)
@@ -645,7 +645,7 @@ $ bin/rspec spec/system/book_spec.rb
 ```
 
 - 失敗しなくてもCapybaraの機能でスクリーンショットを撮れます
-- `save_screenshot('ss.png')`
+- `save_screenshot("ss.png")`
     - tmp/capybara/ss.png にスクリーンショットが撮れます
 
 ## フォームからPOSTするSystemSpecを書く
@@ -717,7 +717,7 @@ json.status "ok"
 
 spec/requests/status_spec.rb
 ```ruby
-require 'rails_helper'
+require "rails_helper"
 RSpec.describe "Statuses", type: :request do
   it "GET /status" do
     get "/status"
@@ -835,9 +835,9 @@ irb> variation.book
 - factory定義に関連を書きたい場合にはtraitをつかうのがお勧めです
   - traitをつかわずに関連先を必ずつくるように書いてしまうと、メンテナンスが難しくなるためです
 
-### belogs_to関連でのつかい方の例
+### belongs_to関連でのつかい方の例
 
-- Variationモデルにbelogs_to関連bookがあるサンプルコード
+- Variationモデルにbelongs_to関連bookがあるサンプルコード
 - traitブロックにbook関連をassociationをつかって書くと、create時にはbookをcreateし、build時にはbookをbuildしてくれます。
 
 spec/factories/variations.rb
@@ -946,8 +946,8 @@ end
 - rspec-mocks
     - rspec-rails gemをつかうと依存gemとしてrspec-mocksも追加されて利用可能になります
         - https://github.com/rspec/rspec-rails/blob/main/rspec-rails.gemspec#L47-L57
-    - よくつかわれているのでみんな文法を知っている
-    - minitestでもつかえる
+    - よくつかわれているのでみんな文法を知っている利点があります
+    - minitestでもつかえます
 - rr, mochaなど機能や文法の違う別のライブラリもあります
     - https://relishapp.com/rspec/rspec-core/v/3-10/docs/mock-framework-integration
 
@@ -1137,7 +1137,7 @@ end
 - 通常はtest環境でだけでつかえれば問題ないですが、development環境でつかうときは以下を設定します
 
 ```ruby
-require 'active_support/testing/time_helpers'
+require "active_support/testing/time_helpers"
 include ActiveSupport::Testing::TimeHelpers
 ```
 
@@ -1187,7 +1187,7 @@ Time.current # => Sat, 09 Nov 2013 15:34:49 EST -05:00
 
 - 複数のDBへアクセスできる機能がRails6.0で導入されました
 - minitestでは自動で複数DBを構築し、並列実行してくれます
-- RSpecだとまだ使えないけどそのうち入るかもしれません
+- RSpecではまだつかえませんが、そのうち入るかもしれません
 - パーフェクトRails 3章 3-3 にも詳しく説明があります
 
 ## CI(Continuas Integration)
