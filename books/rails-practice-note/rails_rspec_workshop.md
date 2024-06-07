@@ -1183,6 +1183,61 @@ Time.current # => Sat, 09 Nov 2013 15:34:49 EST -05:00
 - ブロックも渡せます
 - 戻すにはtravel_backメソッド、またはそのエイリアスのunfreeze_timeメソッドです
 
+## 一時的なクラスをつくる技
+
+たとえば、テストのためにモジュールをincludeしたクラスをつくりたいときなど、一時的なクラスをつくると便利なことがあります。
+
+サンプルコードを書くと次のようになります。
+
+```ruby
+module Foo # テストしたいモジュール
+  def foo
+    "foo!"
+  end
+end
+
+C = Class.new do # クラスをつくってCという名前をつける
+  include Foo # クラスのコードをブロックに書く
+end
+
+p C.new.foo #=> "foo!"
+```
+
+ただし、RSpecでこのまま書くと、グローバルな名前空間で定数(= クラス名、先ほどのコードでのC)が定義されてしまい、ほかのテストケースに影響を与えてしまう可能性があります。
+
+このコードは、Rubocopのrubocop-rspecをつかうとRSpec/LeakyConstantDeclarationの警告が出ます。
+
+- [RuboCop::Cop::RSpec::LeakyConstantDeclaration](https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/LeakyConstantDeclaration)
+
+良い方法は、stub_constをつかうことです。定数のスタブをつくることができます。他のスタブと同じく、テストケースが終わったら破棄されます。
+
+- [RSpec::Mocks::ExampleMethods#stub_const](https://rubydoc.info/github/rspec/rspec-mocks/RSpec%2FMocks%2FExampleMethods:stub_const)
+
+次のコードはstub_constをつかって書いたRSpecのサンプルコードです。
+
+```ruby
+require "rails_helper"
+
+RSpec.describe "Foo" do # Fooモジュールのテストコード
+  describe "Foo#foo" do
+    before do
+      test_class = Class.new do
+        include Foo
+      end
+      stub_const("TestClassForFoo", test_class)
+      # 上でつくったクラスにTestClassForFooと名前をつけてスタブにする
+    end
+
+    context "..." do
+      it do
+       expect(TestClassForFoo.new.foo).to eq "foo!"
+       # module FooをincludeしたTestClassForFooクラスをつかう
+      end
+    end
+  end
+end
+```
+
 ## 複数DB機能
 
 - 複数のDBへアクセスできる機能がRails6.0で導入されました
