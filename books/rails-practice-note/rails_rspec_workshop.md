@@ -30,7 +30,7 @@ title: "[Rails基礎] RSpec基礎講座"
 ## 参考資料
 
 - 本ページでつかうと便利な参考資料です
-- RSpecリファレンスページ https://relishapp.com/rspec/rspec-rails/docs
+- RSpecリファレンスページ https://rspec.info/documentation/latest/rspec-core/
 - Railsガイド 「Railsテスティングガイド」 https://railsguides.jp/testing.html
 - Capybaraリファレンスページ: https://rubydoc.info/github/teamcapybara/capybara/master/Capybara/Node/Matchers
 
@@ -425,7 +425,7 @@ end
 - beforeでテスト対象を準備して、itで期待する結果を書きます
 - beforeをつかうかどうかはプロジェクトやケースに依存します
 - あまりつかわないですがafterもあります
-- 詳細: https://relishapp.com/rspec/rspec-core/docs/hooks/before-and-after-hooks
+- 詳細: https://rspec.info/documentation/latest/rspec-core/RSpec/Core/Hooks.html
 
 ## let, let!: 変数を書く道具
 
@@ -523,7 +523,7 @@ end
     - ブラウザを動かすので低速になる
     - 明示してPOSTすることはできないので、ブラウザ操作でフォームをsubmitするなどする必要があります
 - spec/system フォルダ以下に置かれます
-- Railsでつかえるマッチャー一覧: https://relishapp.com/rspec/rspec-rails/docs/matchers
+- Railsでつかえるマッチャー一覧: https://rspec.info/documentation/latest/rspec-rails/RSpec/Rails/Matchers.html
 - ブラウザを操作するためにCapybara gemがよく利用されます
 - Capybaraをつかうとブラウザ用の操作メソッドとマッチャーが提供されます
 - Capybaraでつかえるマッチャー一覧: https://rubydoc.info/github/teamcapybara/capybara/master/Capybara/Node/Matchers
@@ -949,7 +949,7 @@ end
     - よくつかわれているのでみんな文法を知っている利点があります
     - minitestでもつかえます
 - rr, mochaなど機能や文法の違う別のライブラリもあります
-    - https://relishapp.com/rspec/rspec-core/v/3-10/docs/mock-framework-integration
+    - https://rspec.info/features/3-13/rspec-core/mock-framework-integration/
 
 - rspec-mock以外のmockをつかうときはspec_helper.rbに設定を書きます
     - デフォルトはrspec-mockの設定 `config.mock_with :rspec` (=rspec-mock)になっていると思います
@@ -1013,7 +1013,6 @@ end
 - receiveで指定したメソッドは、本来のメソッドは呼び出されず、and_returnで指定した戻り値を返すだけになります
 - and_returnで戻り値を指定するのではなく、そのメソッドの処理をブロックで書くこともできます。
   - `allow(book).to receive(:lucky?){ some_method }`
-  - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/configuring-responses/block-implementation
 - 引数を指定するときはwithメソッドをつかいます
   - allow(対象のオブジェクト).to receive(メソッド名のシンボル).with(引数).and_return(戻り値)
   - 例として、環境変数を取得するENV#fetchメソッドをモックするには `allow(ENV).to receive(:fetch).with("HOME").and_return("/Users/igarashi")` となります
@@ -1026,9 +1025,9 @@ allow(ENV).to receive(:fetch).with("HOME").and_return("/Users/igarashi")
 ```
 
 - and_return以外にもこんな道具が用意されています
-  - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/configuring-responses
+  - https://rspec.info/documentation/latest/rspec-mocks/RSpec/Mocks/MessageExpectation.html
 - allowメソッドのドキュメント
-  - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/basics/allowing-messages
+  - https://rspec.info/documentation/latest/rspec-mocks/RSpec/Mocks/ExampleMethods.html#allow-instance_method
 
 - 指定したメソッドが呼び出されたかどうかを確認することもできます
   - `expect(book).to receive(:lucky?)`
@@ -1055,14 +1054,12 @@ end
 - ここでのbookは既存のオブジェクトの一部の動作を変更することでテスト用のオブジェクトをつくりました
 - doubleメソッドをつかうと、対象クラスのオブジェクトをつかわずにモックやスタブをつくれます
 - 詳しく知りたいときは次のドキュメントが参考になります
-  - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/basics/test-doubles
-  - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs/verifying-doubles
+  - https://rspec.info/documentation/latest/rspec-mocks/RSpec/Mocks/Double.html
 
 - 参考資料
   - 基礎の説明
-    - https://relishapp.com/rspec/rspec-mocks/v/3-10/docs
-  - サンプルコード集
-    - https://relishapp.com/rspec/rspec-core/v/3-10/docs/mock-framework-integration/mock-with-rspec
+    - https://rspec.info/documentation/latest/rspec-mocks
+    - https://rspec.info/features/3-13/rspec-mocks/
 
 ##  例外を確認する技
 
@@ -1106,12 +1103,11 @@ end
 - shared_example
     - 複数のitをまとめる技
     - 使いすぎるとテストコードが読みづらくなるので、あまりお勧めしません
-    - https://relishapp.com/rspec/rspec-core/v/3-9/docs/example-groups/shared-examples
+    - https://rspec.info/documentation/latest/rspec-core/RSpec/Core/SharedExampleGroup.html
 
 - shared_context
     - 複数のcontextをまとめる技
     - 使いすぎるとテストコードが読みづらくなるので、あまりお勧めしません
-    - https://relishapp.com/rspec/rspec-core/v/3-9/docs/example-groups/shared-context
 
 ## 現在時刻を変更する技
 
@@ -1259,7 +1255,7 @@ end
 
 ## 参考資料
 
-- RSpecリファレンスページ: https://relishapp.com/rspec/rspec-rails/docs
+- RSpecリファレンスページ: https://rspec.info/documentation
 - Railsガイド 「Railsテスティングガイド」: https://railsguides.jp/testing.html
 - Capybaraリファレンスページ: https://rubydoc.info/github/teamcapybara/capybara/master/Capybara/Node/Matchers
 
