@@ -6,9 +6,9 @@ title: "[Rails基礎] RSpec基礎講座"
 - 自分で読んで手を動かしていく形式です
   - この資料に書かれているコードのうち、動かせそうなものは手元で書いて動かしてみてください
 - サンプルコード
-  - https://github.com/igaiga/rails704_ruby312_rspec
+  - https://github.com/igaiga/rspec_workshop_app
   - 説明につかっているコードはほぼ全て入っています
-  - Rails7.0.4, Ruby3.1.2, rspec-rails 5.1.2, rspec-core 3.11.0
+  - Rails7.1.3.4, Ruby3.3.3, rspec-rails 5.1.2, rspec-core 3.11.0
 
 ## RSpecとminitestの違い
 
