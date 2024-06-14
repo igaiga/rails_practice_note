@@ -1032,6 +1032,8 @@ allow(ENV).to receive(:fetch).with("HOME").and_return("/Users/igarashi")
 - 指定したメソッドが呼び出されたかどうかを確認することもできます
   - `expect(book).to receive(:lucky?)`
     - このように書くと、bookに代入されたオブジェクトに対してlucky?メソッドが呼び出されればテストOKになります
+    - チェック対象メソッドがテストで呼び出される前に書く必要があります
+    - チェック対象メソッドがテストで呼び出された後に書くときには、receiveのかわりにhave_receivedメソッドをつかいます
 
 ```ruby
 describe "Book#bonus" do
