@@ -409,7 +409,7 @@ end
 ## before: テストの前準備をする道具
 
 - beforeメソッドをつかうと、itを実行する前に実行するブロックを書けます
-    - beforeとitで変数を共通利用するときはインスタンス変数をつかいます
+  - beforeとitで変数を共通利用するときはインスタンス変数をつかいます
 
 ```ruby
 context "Book#titleが文字列のとき" do
@@ -423,6 +423,8 @@ end
 ```
 
 - beforeでテスト対象を準備して、itで期待する結果を書きます
+- 「事前にデータを用意する必要があり、itでは参照しない」ようなときにbeforeは便利です
+  - 後述するletとlet!は変数への代入を伴うため、あとで参照する意図を感じさせます
 - beforeをつかうかどうかはプロジェクトやケースに依存します
 - あまりつかわないですがafterもあります
 - 詳細: https://rspec.info/documentation/latest/rspec-core/RSpec/Core/Hooks.html
@@ -430,12 +432,14 @@ end
 ## let, let!: 変数を書く道具
 
 - 変数を書く道具としてlet、let!が用意されています
-- つかうかどうかはプロジェクトに寄ります
+- letとlet!は変数への代入を伴うため、あとで参照する意図を感じさせます
 - letとlet!の違いは実行タイミングです
     - letは利用時に実行されます
     - let!は書かれた場所で実行されます
+- つかうかどうかはプロジェクトに寄ります
 - ちなみに、letをつかうな派も、let!をつかうな派もいます（難しい問題です）
 - 私はlet, let!をつかわないで、できるだけitの中に書いて視線移動をなくすのが読みやすいと思っています
+  - 詳しくは後述します
 
 ```ruby
 context "Book#titleが文字列のとき" do
@@ -465,10 +469,8 @@ context "Book#titleが文字列のとき" do
 end
 ```
 
-### subjectに名前をつけることもできる
-
 - subjectに名前をつけることもできます
-- 文法はletと同じです
+- 動作はletと同じです
 
 ```ruby
 context "Book#titleがnilのとき" do
@@ -478,6 +480,27 @@ context "Book#titleがnilのとき" do
   end
 end
 ```
+
+## before, let, let!, subject はつかわなくても良い
+
+- ここまででbefore, let, let!, subjectとitの前に実行されるメソッドを紹介してきました
+- これらは必ずしもつかわなければならないものではありません
+- itブロックの中でローカル変数をつかって書くこともできます
+
+```ruby
+it "titleとauthorを結んだ文字列が返ること" do
+  book = Book.new(title: "RubyBook", author: "matz")
+  expect(book.title_with_author).to eq("RubyBook - matz")
+end
+```
+
+- 私はこの「itブロックの中でローカル変数をつかう」書き方ををお勧めします
+- メリットは、expectのそばで変数をつくるので、離れたところへ定義を調べにいく必要がないことです
+  - 視線の移動が少なくなり、読むときの負担が減ります
+- デメリットは、DRYに書くことが難しくなることです
+  - これはメリットで書いた「expectのそばで変数をつくる」を実現するためのトレードオフになっています
+- この書き方を基本として、大きなメリットがあると判断したときにbefore, let, let!, subject をつかうことをお勧めします
+- 最初からbefore, let, let!, subjectをつかわなければならないと考える必要はありません
 
 ## 1つのitメソッドのブロックに複数のexpectを書くことができる
 
