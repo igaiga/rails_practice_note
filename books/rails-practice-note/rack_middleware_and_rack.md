@@ -147,7 +147,7 @@ use UpcaseAll
 
 # テスト用Rackアプリ
 App = lambda do |env|
-  [200, {"Content-Type" => "text/html"}, ["Hello, Rack world!"]]
+  [200, {"content-type" => "text/html"}, ["Hello, Rack world!"]]
 end
 run App
 ```
@@ -179,7 +179,7 @@ end
 
 # テスト用アプリ（テスト時rackupのときだけ使い、組み込むときはコメントアウト）
 App = lambda do |env|
- [200, {"Content-Type" => "text/html"}, ["Hello, Rack world!"]]
+ [200, {"content-type" => "text/html"}, ["Hello, Rack world!"]]
 end
 use Hello
 run App
