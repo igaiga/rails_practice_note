@@ -10,7 +10,7 @@ title: "[Ruby基礎][Rails基礎] デバッグに便利な道具"
 
 binding.irbはgemをインストールせずに実行でき、またrequireを書く必要もありません。どんな環境でもつかえるデバッグの道具としてたいへん便利です。irbは標準添付ライブラリですが、Gemとしても提供されているので gem install irb コマンドで最新版のirbをインストールすることも可能です。
 
-また、ステップ実行や変数情報の取得などより多くの機能を持ったdebug gemもRubyの標準添付ライブラリとして提供されています。新しいバージョンのirbとdebug gemをつかうと、binding.irbで一時停止した状態からdebugコマンドなどを実行することでdebug gemをつかうこともできます。debug gemについては[別のページ](../viewer/ruby_debug_gem)で説明しているのでそちらも参照してください。
+また、ステップ実行や変数情報の取得などより多くの機能を持ったdebug gemもRubyの標準添付ライブラリとして提供されています。新しいバージョンのirbとdebug gemをつかうと、binding.irbで一時停止した状態からdebugコマンドなどを実行することでdebug gemをつかうこともできます。debug gemについては[別のページ](../viewer/ruby_rails_debug_gem)で説明しているのでそちらも参照してください。
 
 ## g gem
 
