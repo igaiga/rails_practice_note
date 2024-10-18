@@ -107,12 +107,9 @@ validationメソッドに分岐を書くことはメンテナンスを難しく�
 
 フォームオブジェクトをつくるときは、ActiveModel::Modelモジュール(Rails7.0からはActiveModel::APIモジュールも新設されました)をincludeすることで、属性のハッシュで 初期化する機能や、バリデーションを設定して実行できる機能、form_withとやりとりする機能などをかんたんに追加することができます。
 
-詳細はRails APIのページにサンプルコードがあります。
+フォームオブジェクトの実装はこちらのページに書いてあります。
 
-- https://api.rubyonrails.org/classes/ActiveModel/Model.html
-- https://api.rubyonrails.org/classes/ActiveModel/API.html
-
-また、パーフェクトRails増補改訂版 12-3 フォームオブジェクトの節にも解説があります。
+[フォームオブジェクト](https://zenn.dev/igaiga/books/rails-practice-note/viewer/ar_form_object)
 
 ## Service層を入れるのはできるだけやめてほしい
 

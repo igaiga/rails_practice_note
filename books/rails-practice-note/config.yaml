@@ -11,6 +11,7 @@ chapters:
   - ar_sql_injection
   - ar_transaction_lock
   - ar_delegated_type
+  - ar_form_object
   - ar_processing_across_multiple_models
   - rack_middleware_and_rack
   - remaining_variables
