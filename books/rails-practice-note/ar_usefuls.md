@@ -54,7 +54,7 @@ Novelty.joins(book: :user).where(books: {users: {name: "igaiga"}})
 
 ## mergeメソッド
 
-AR::ReleationオブジェクトにmergeメソッドをつかってAR::Releationを渡すと、AR::Releation同士を結合することができます。
+AR::RelationオブジェクトにmergeメソッドをつかってAR::Relationを渡すと、AR::Relation同士を結合することができます。
 
 次のように、Userが1対多でBookを持つような関連を考えます。
 
@@ -102,14 +102,14 @@ User.joins(:books).where(title: "Ruby").to_sql
 #=> "SELECT "users".* FROM "users" INNER JOIN "books" ON "books"."user_id" = "users"."id" WHERE "users"."title" = 'Ruby'"
 ```
 
-join先のテーブルへAR::Releation条件をつなげたいときに、mergeメソッドをつかえば次のように書けます。
+join先のテーブルへAR::Relation条件をつなげたいときに、mergeメソッドをつかえば次のように書けます。
 
 ```ruby
 User.joins(:books).merge(Book.where(title: "Ruby"))
 #=> "SELECT "users".* FROM "users" INNER JOIN "books" ON "books"."user_id" = "users"."id" WHERE "books"."title" = 'Ruby'"
 ```
 
-このようにmergeメソッドをつかうと、対象モデルを指定してARメソッド群をつなげることができます。ここではwhere1つだけをmergeしていますが、scopeを呼び出したり、もっと複雑なAR::Releationをつなげるときに便利です。
+このようにmergeメソッドをつかうと、対象モデルを指定してARメソッド群をつなげることができます。ここではwhere1つだけをmergeしていますが、scopeを呼び出したり、もっと複雑なAR::Relationをつなげるときに便利です。
 
 ちなみに、whereメソッドは次のように対象テーブルを指定することもできます。
 
@@ -117,7 +117,7 @@ User.joins(:books).merge(Book.where(title: "Ruby"))
 User.joins(:books).where(books: {title: "Ruby"})
 ```
 
-また、mergeメソッドの引数にはAR::Releationのほか、ARオブジェクトの配列（アンド集合を返す）、またはProc（複数のAR::Relationで共有してつかうときに便利）を渡すこともできます。
+また、mergeメソッドの引数にはAR::Relationのほか、ARオブジェクトの配列（アンド集合を返す）、またはProc（複数のAR::Relationで共有してつかうときに便利）を渡すこともできます。
 
 ```ruby
 recent_books = Book.order(created_at: :desc).first(5)
