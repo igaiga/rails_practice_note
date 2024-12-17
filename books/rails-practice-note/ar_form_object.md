@@ -6,17 +6,16 @@ title: "[ActiveRecord] フォームオブジェクト"
 
 ## フォームオブジェクトとは
 
-フォームオブジェクトはフォームからの入力を検証したり、form_withメソッドにモデルのように渡すことができるオブジェクトです。ActiveRecordを継承しないのでモデルではないです。
+フォームオブジェクトはフォームからの入力を検証したり、form_withメソッドにモデルのように渡すことができるオブジェクトです。
 
 ## フォームオブジェクトのつくりかた
 
-ActiveModel::Model, ActiveModel::Attributes をつかうとRailsの提供部品でフォームオブジェクトがつくれます。
+ActiveModel::API, ActiveModel::Attributes をつかうとRailsが提供する道具でフォームオブジェクトをつくれます。ActiveRecordを継承せずにつくるのが一般的です。
 
 - ActiveModel::Attributes
   - 型(cast type)を指定したattributesをつくれる
-- ActiveModel::Model
-  - Modelのように振る舞える
-  - form_withに渡せたり、validationできたり、newメソッドでattributesと一緒に初期化できたり、などなど
+- ActiveModel::API
+  - form_withに渡せたり、validationできたり、newメソッドでattributesと一緒に初期化できる機能などを提供
 
 ここでつくるサンプルコードは以下からダウンロードできます。
 
@@ -36,9 +35,9 @@ class FooFormObject
 end
 ```
 
-## ActiveModel::Modelモジュール
+## ActiveModel::APIモジュール
 
-モデルのように振る舞う機能各種をつかえるようになります。
+モデルのように振る舞う機能各種をつかえるようになります。ActiveModel::APIはRails7.0からつかえるようになりました。それより前のバージョンでは、ActiveModel::Modelをつかうことで同様の機能をつかうことができます。
 
 - バリデーションを設定して実行できる機能
 - form_withとやりとりする機能
@@ -47,7 +46,7 @@ end
 
 ```ruby
 class FooFormObject
-  include ActiveModel::Model
+  include ActiveModel::API
   include ActiveModel::Attributes
 
   attribute :name, :string
@@ -63,7 +62,7 @@ class FooFormObject
 
 ## 今回のフォームオブジェクトのサンプルアプリ仕様
 
-Userモデルのattributesである name, emailを入力するフォームがあったところに、新しくnameだけでusersテーブルに保存できるフォームが追加されたときの仕様を想定しています。
+Userモデルのattributesである name, emailを入力するフォームが既にあるところに、新しくnameをひらがなでusersテーブルに保存するフォームが追加されたときを想定しています。nameをひらがなでusersテーブルに保存するフォーム用のフォームオブジェクトとしてUserNameFormをつくっていきます。
 
 ![](/images/rails_practice_note/ar_form_object/form_object_app_specs.png)
 
@@ -102,7 +101,7 @@ app/forms/user_name_form.rb
 
 ```ruby
 class UserNameForm
-  include ActiveModel::Model
+  include ActiveModel::API
   include ActiveModel::Attributes
   attribute :name, :string
 
@@ -315,7 +314,7 @@ app/views/names/_form.html.erb
 
 ```ruby
 class UserNameForm
-  include ActiveModel::Model
+  include ActiveModel::API
   # バリデーション機能、form_withに渡せる機能、
   # new(name: "xxx", ...)のようにattributesとあわせて初期化する機能などを足す
   include ActiveModel::Attributes # 型を持つattributesをかんたんに定義できるようにする
@@ -373,7 +372,7 @@ end
 - サンプルコード: https://github.com/igaiga/rails_form_object_sample_app
 
 - Rails API
-  - [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html)
-  - [ActiveModel::Attributes](https://api.rubyonrails.org/classes/ActiveModel/Attributes.html)
   - [ActiveModel::API](https://api.rubyonrails.org/classes/ActiveModel/API.html)
+  - [ActiveModel::Attributes](https://api.rubyonrails.org/classes/ActiveModel/Attributes.html)
+  - [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html)
 - [パーフェクトRails増補改訂版](https://gihyo.jp/book/2020/978-4-297-11462-6) 12-3 フォームオブジェクト節
