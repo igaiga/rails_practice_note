@@ -62,11 +62,13 @@ class FooFormObject
 
 ## 今回のフォームオブジェクトのサンプルアプリ仕様
 
-Userモデルのattributesである name, emailを入力するフォームが既にあるところに、新しくnameをひらがなでusersテーブルに保存するフォームが追加されたときを想定しています。nameをひらがなでusersテーブルに保存するフォーム用のフォームオブジェクトとしてUserNameFormをつくっていきます。
+Userモデルのattributesである name, emailを入力するフォームが既にあるところに、新しくnameをひらがなだけでusersテーブルに保存するフォームが追加されたときを想定しています。新しいnameをひらがなで登録するフォーム用のフォームオブジェクトとしてUserNameFormをつくっていきます。
 
 ![](/images/rails_practice_note/ar_form_object/form_object_app_specs.png)
 
 ## Userモデルのattributesとバリデーション
+
+既にあるUserモデルのattributesとバリデーションは次のようになっています。
 
 app/models/user.rb
 
@@ -82,20 +84,20 @@ class User < ApplicationRecord
 end
 ```
 
-Userモデル
-
 - nameは必須
 - emailはblank可で、フォーマットの確認をする
 
-`URI::MailTo::EMAIL_REGEXP`はRubyに定義されてるemail検証正規表現です。
+`URI::MailTo::EMAIL_REGEXP`はRubyのURIライブラリで定義されているメールアドレス検証用の正規表現です。
 
-## その1 基礎工事
+## フォームオブジェクトUserNameFormをつくる
 
-- 名前は **UserNameForm** とします
-- app/forms/user_name_form.rb
-  - 置くフォルダは app/forms とます
-- attributesとして`attribute :name, :string` を持ちます
-- バリデーション `validates :name, presence: true`
+新しいnameをひらがなで登録するフォーム用のフォームオブジェクトとしてUserNameFormをつくっていきます。
+
+### 基礎工事
+
+クラス名は`UserNameForm`とします。置くフォルダを app/forms として、ファイル名は `app/forms/user_name_form.rb` にしています。
+
+attributesとして`attribute :name, :string` を持ちます。nameは必須、全ひらがな(=ひらがなだけ)で入力する仕様なので、バリデーションを`validates :name, format: { with: /\A\p{Hiragana}+\z/ }, presence: true` と書きます。 `/\A\p{Hiragana}+\z/` は全ひらがなかどうか判定する正規表現です。
 
 app/forms/user_name_form.rb
 
@@ -103,19 +105,17 @@ app/forms/user_name_form.rb
 class UserNameForm
   include ActiveModel::API
   include ActiveModel::Attributes
-  attribute :name, :string
 
-  # このフォームオブジェクトのバリデーション
-  validates :name, presence: true
+  attribute :name, :string
+  validates :name, format: { with: /\A\p{Hiragana}+\z/ }, presence: true
 end
 ```
 
-## その2 Userモデルをフォームオブジェクトへ渡す
+### Userモデルをフォームオブジェクトへ渡す
 
-- Userモデルに仕事を委譲するために`attr_accessor :user`で設定取得可能に
-  - DB保存機能を委譲するためにUserモデルを設定可能に
-  - URLヘルパーで `xxx_path(user)` のようにつかいたいので取得も可能に
-- transfer_attributesメソッドでフォームオブジェクトからモデルへattributesセット
+Userモデルに仕事を委譲するため、 `attr_accessor :user` で設定と取得を可能にしています。DBへ保存するときと、URLヘルパーのメソッド `xxx_path(user)` などをつかうときにUserモデルへ委譲します。
+
+transfer_attributesメソッドでフォームオブジェクトからUserモデルへattributesをセットします。
 
 app/forms/user_name_form.rb
 
@@ -132,10 +132,9 @@ class UserNameForm
 end
 ```
 
-## その3 saveメソッド
+### フォームオブジェクトのsaveメソッドを実装
 
-- DB保存機能をsaveメソッドとして実装
-  - モデルと似た書き味を目指します
+DB保存機能をsaveメソッドとして実装します。モデルと似た書き味を目指します。
 
 app/forms/user_name_form.rb
 
@@ -151,13 +150,11 @@ def save(...) # ... は全引数を引き渡す記法
 end
 ```
 
-## その4 initializeメソッド
+### フォームオブジェクトのinitializeメソッドを実装
 
-- `UserNameForm.new(name_params)` フォームからのparamsで初期化する想定
-- 追加実装しなくてもnewメソッドでattributesを設定可能
-  - `UserNameForm.new(name: "iga")`
-- 今回はnewメソッドへattributesのほかにUserモデルも渡したい
-  - initializeメソッドをオーバーライドして機能追加
+`UserNameForm.new(name_params)` のように、ブラウザのフォームから届いたparamsで初期化する想定です。 ActiveModel::APIモジュールにより、特に追加で実装しなくてもnewメソッドでattributesを設定可能で、 `UserNameForm.new(name: "いがいが")` と書けます。
+
+今回はnewメソッドへattributesのほかにUserモデルも渡したいので、initializeメソッドをオーバーライドして機能追加します。
 
 app/forms/user_name_form.rb
 
@@ -173,13 +170,9 @@ def initialize(model: nil, **attrs) # `**`はキーワード引数をHashで受�
 end
 ```
 
-## その5 コントローラの変更
+### コントローラの変更
 
-### その5-1 コントローラの変更 StrongPrameters
-
-- NamesControllerとそのroutes, viewのベース部分はscaffoldでつくったコードの想定
-- StrongPrametersを変更
-  - フォームからのparamsにあわせて`require(:user_name_form)`へ
+NamesControllerとそのroutes、viewのベース部分はscaffoldでつくったコードの想定です。StrongPrametersをフォームからのparamsにあわせて`require(:user_name_form)`へ変更します。
 
 app/controllers/names_controller.rb
 
@@ -194,10 +187,7 @@ class NamesController < ApplicationController
 end
 ```
 
-### その5-2 コントローラの変更 new & createアクション
-
-- `@user_name_form` 変数へUserNameFormオブジェクトを代入
-- リダイレクト先のURL取得を変更
+new & createアクションを変更します。 `@user_name_form` 変数へUserNameFormオブジェクトを代入します。リダイレクト先のURLヘルパーメソッドを変更します。
 
 app/controllers/names_controller.rb
 
@@ -219,10 +209,8 @@ class NamesController < ApplicationController
 end
 ```
 
-### その5-3 コントローラの変更 edit & updateアクション
+edit & updateアクションを変更します。`@user_name_form` 変数へUserNameFormオブジェクトを代入します。リダイレクト先のURLヘルパーメソッドを変更します。
 
-- `@user_name_form` 変数へUserNameFormオブジェクトを代入
-- リダイレクト先のURL取得を変更
 
 app/controllers/names_controller.rb
 ```ruby
@@ -243,32 +231,28 @@ class NamesController < ApplicationController
 end
 ```
 
-## その6 viewの変更
+### ビューの変更
 
-### その6-1 form_withでフォームオブジェクトをつかう
-
-- form_withのmodelオプションにはフォームオブジェクトを渡すことにします
-- コントローラの変更で変数user_name_formにフォームオブジェクトが入っている
+form_withでフォームオブジェクトをつかうように変更します。form_withメソッドのmodelオプションにはフォームオブジェクトを渡すことにします。
 
 app/views/names/_form.html.erb
 ```erb
+<%# 変数user_name_formにフォームオブジェクトが入っています %>
 <%= form_with(model: user_name_form) do |form| %>
 ```
 
-- 次のエラーが出ます
+実行すると、次のエラーが出ます。
 
 ```
 undefined method `user_name_forms_path' for an instance of #<Class:0x...>
 ```
 
-- フォームのリクエスト先パスがわからない旨のエラー
-- 今回はform_withへurl, methodオプションでリクエスト先を指定する方法で対応
+フォームのリクエスト先パスがわからない旨のエラーが出ます。今回はform_withへurl, methodオプションでリクエスト先を指定する方法で対応します。他にはidメソッドとpersisted?メソッドとroutesを実装する方法もあります。
 
-### その6-2 form_withへurl, methodオプションを指定
+form_withメソッドのurl, methodオプションでリクエスト先を指定します。モデルが保存されているかどうかを`model.persisted?` メソッドで判定して、リクエスト先のアクションを変更します。
 
-- form_withのurl, methodオプションでリクエスト先を指定
-  - モデルが**未保存**のときは**createアクション**へ
-  - モデルが**保存済み**のときは**updateアクション**へ
+- モデルが未保存のときはcreateアクションへ
+- モデルが保存済みのときはupdateアクションへ
 
 app/views/names/_form.html.erb
 
@@ -280,11 +264,7 @@ app/views/names/_form.html.erb
 <%= form_with(model: user_name_form, **form_with_options) do |form| %>
 ```
 
-- `model.persisted?` メソッドはDB保存済みかどうかを判定
-- `**form_with_options`の`**`はHashをキーワード引数で渡す文法
-- ビューに書くと読みづらいのでフォームオブジェクトに移動します
-
-### その6-3 form_withのオプションをフォームオブジェクトから取得
+ビューに書くと読みづらいのでフォームオブジェクトへ移動します。ビュー以外でURLヘルパーメソッド(names_pathなど)をつかうために、 `Rails.application.routes.url_helpers.names_path` のようにレシーバを指定しています。
 
 app/forms/user_name_form.rb
 
@@ -300,9 +280,6 @@ app/forms/user_name_form.rb
   end
 ```
 
-- `Rails.application.routes.url_helpers.names_path`
-  - ビュー以外でURLヘルパーメソッド(names_pathなど)をつかう方法
-
 app/views/names/_form.html.erb
 ```erb
 <%= form_with(model: user_name_form, **user_name_form.form_with_options) do |form| %>
@@ -310,7 +287,7 @@ app/views/names/_form.html.erb
 
 これで完成です！ 🎉🎊🎂
 
-## フォームオブジェクト最終形
+### フォームオブジェクト最終形
 
 ```ruby
 class UserNameForm
@@ -322,7 +299,7 @@ class UserNameForm
   attribute :name, :string
 
   # このフォームオブジェクトのバリデーション
-  validates :name, presence: true
+  validates :name, format: { with: /\A\p{Hiragana}+\z/ }, presence: true
 
   # DB保存などの機能を委譲するためにUserモデルをセット可能に
   # redirect_to @user のときなどUserモデルを取りたいので取得もできるようにする
