@@ -408,6 +408,15 @@ p result #=> [{"A"=>"a"}, {"B"=>"b"}]
 
 Numbered parametersは、Ruby2.7.0で導入された比較的新しい記法です。
 
+また、Ruby3.4からは `_1` のようにつかえる `it` が導入されました。Numbered parametersを1つしかつかわないときに読みやすく書くことができます。
+
+```ruby
+result = ["a", "b"].map do
+  it.upcase
+end
+p result #=> ["A", "B"]
+```
+
 ## Frozen String Literal
 
 コードの1行目に `# frozen_string_literal: true` と書くと、そのファイル中に書かれたStringリテラル全てをイミュータブル(変更不可)にします。各Stringオブジェクトにfreezeメソッドを呼んだことと同等になります。
