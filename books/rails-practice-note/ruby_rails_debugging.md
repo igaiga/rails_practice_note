@@ -53,18 +53,12 @@ require "csv"
 CSV.method(:read) #=> Methodオブジェクト
 ```
 
-Methodオブジェクトで呼び出せるsource_locationメソッドをつかうと、そのメソッドが定義されたソースコードのパスと行数を表示できます。
+Methodオブジェクトで呼び出せるsource_locationメソッドをつかうと、そのメソッドが定義されたソースコードのパスと行数を表示できます。また、Methodオブジェクトのinspectメソッドが同様の情報を返すので、source_locationメソッドの代わりにpメソッドでも表示できます。
 
 ```ruby
 require "csv"
-CSV.method(:read).source_location #=> ["/Users/igaiga/.rbenv/versions/3.1.2/lib/ruby/3.1.0/csv.rb", 1668] 
-```
-
-Ruby2.7からはMethodオブジェクトのinspectメソッドが同様の情報を返すので、source_locationメソッドの代わりにpメソッドでも表示できます。
-
-```ruby
-require "csv"
-p CSV.method(:read) #=> #<Method: CSV.read(path, **options) /Users/igaiga/.rbenv/versions/3.1.2/lib/ruby/3.1.0/csv.rb:1668>
+p CSV.method(:read).source_location #=> ["/Users/igaiga/.rbenv/versions/3.4.1/lib/ruby/gems/3.4.0/gems/csv-3.3.2/lib/csv.rb", 1922]
+p CSV.method(:read) #=> #<Method: CSV.read(path, **options) /Users/igaiga/.rbenv/versions/3.4.1/lib/ruby/gems/3.4.0/gems/csv-3.3.2/lib/csv.rb:1922>
 ```
 
 source_locationメソッドでnilが返ってきたときは、Rubyで定義されていないメソッドです。たとえば組み込みライブラリのクラスではC言語で定義されているメソッドもあるので、そのケースではnilを返します。
@@ -73,7 +67,7 @@ source_locationメソッドでnilが返ってきたときは、Rubyで定義さ�
 
 Methodオブジェクトには他にもownerメソッド(メソッドが定義されているクラスまたはモジュールを返す)、original_nameメソッド(aliasがつかわれているときにalias先のメソッド名を返す)、super_methodメソッド(superを呼んだときに呼び出されるメソッドオブジェクトを返す)など便利なメソッドが用意されています。また、メソッドの継承ツリー呼び出し順を調べるときはModule#ancestorsメソッドが便利です。
 
-また、Ruby2.7で定数が定義されたソースコードのパスをを返すModule#const_source_location が追加されました。source_locationメソッドの定数版に相当します。
+また、定数が定義されたソースコードのパスをを返すModule#const_source_locationメソッドもあります。Method#source_locationメソッドの定数版に相当します。
 
 ```ruby
 class Foo
