@@ -709,10 +709,10 @@ GemはRubyGems(gemコマンド)やBunlder(bundleコマンド)でインストー�
 
 組み込みライブラリと標準添付ライブラリの多くはDefault gemsという仕組みでも提供されていて、RubyGemsの仕組みをつかってライブラリ単体でバージョンアップすることができます。RubyGemsのgemコマンドや、Gemfileに追記してBunlderのbundleコマンドをつかうことで、Default gemsで提供されているライブラリは新しいバージョンをインストールして利用可能になります。Default gemsはRubyと一緒にインストールされるライブラリをGemをつかって更新する仕組みととらえることができます。また、Default gemsはアンインストールできません。Default gemsの例としてはTime、URI、YAMLなどがあります。
 
-Bundled gemsは最初に説明した3種類の最後の Gem と同じですが、Rubyと一緒にインストールされるGemです。一緒にインストールされているだけでBundlerで特別扱いされることはなく、Bundled gemsをBundlerでつかうときには一般のGem(Default gemsでもなく、Bundled gemsでもないもの)と同様にGemfileへ追記が必要です。Rubyインストール時よりも新しいバージョンのBundled gemsが提供されていれば、BundlerやRubyGemsをつかって新しいバージョンをつかうことができます。Bundled gemsはアンインストールすることもできます。Bundled gemsの例としてはRake、TypeProfなどがあります。
+Bundled gemsは最初に説明した3種類の最後の Gem と同じですが、Rubyと一緒にインストールされるGemです。Rubyの開発と共にテストされていて、対象Rubyバージョンでのインストールおよび動作が確認されているメリットがあります。一緒にインストールされているだけでBundlerで特別扱いされることはなく、Bundled gemsをBundlerでつかうときには一般のGem(Default gemsでもなく、Bundled gemsでもないもの)と同様にGemfileへ追記が必要です。Rubyインストール時よりも新しいバージョンのBundled gemsが提供されていれば、BundlerやRubyGemsをつかって新しいバージョンをつかうことができます。Bundled gemsはアンインストールすることもできます。Bundled gemsの例としてはRake、TypeProfなどがあります。
 
 - 参考資料
-  - [Ruby Standard Library](https://docs.ruby-lang.org/en/master/standard_library_rdoc.html)
+  - [徹底解説！ default gemsとbundled gemsのすべて](https://gihyo.jp/article/2024/01/ruby3.3-bundled-gems)
 
 ## deprecatedカテゴリのWarningを出力する
 
