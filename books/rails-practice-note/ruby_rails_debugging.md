@@ -79,6 +79,27 @@ p Module.const_source_location(:Foo) #=> ["example.rb", 1]
 - Rubyリファレンスマニュアル Methodクラス: https://docs.ruby-lang.org/ja/latest/class/Method.html
 - Rubyリファレンスマニュアル Module#const_source_locationメソッド: https://docs.ruby-lang.org/ja/latest/method/Module/i/const_source_location.html
 
+## Gemのソースコードを変更して実行する
+
+### Gemがインストールされているパスを調べるbundle show, gem whichコマンド
+
+- Gem名からそのGemがインストールされているパスを調べるコマンドです
+- BundlerとRubyGemsとそれぞれにコマンドが用意されています
+- RailsアプリではBundlerのコマンドである bundle show をつかうのがお勧めです
+- `$ bundle show gem名`
+    - また、bundle openコマンドをつかうとエディタで開くこともできます
+        - 環境変数EDITORやBUNDLER_EDITORを設定しておく必要があります
+- `$ gem which gem名`
+
+### Gemのソースコードの変更と元に戻す方法
+
+- 自分で書いたコードだけでなく、Gemのソースコードも変更して実行できます
+- `binding.irb` や `binding.break` を書くことでRubyの実行を一時停止することもできます
+- 前に紹介したMethod#source_locationやbundle showコマンドでGemのパスを調べることができます
+- 変更したいファイルをエディタで開いて編集して保存してください
+- Gemを元に戻すときは`gem pristine gem名`コマンドや`bundle pristine gem名`コマンドを実行するとインストール時のコードに戻ります
+- Gemfileに書かれた全てのgemを元に戻すときは `bundle pristine` コマンドをつかうことができます
+
 ## privateメソッドを呼び出す
 
 デバッグのときなど、privateなメソッドをNoMethodErrorにならないように呼び出ししたいときはeval族のメソッドをつかうのが便利です。
