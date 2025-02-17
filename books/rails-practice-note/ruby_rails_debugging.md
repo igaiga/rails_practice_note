@@ -552,7 +552,7 @@ end
 ActiveSupport::Notifications.subscribeメソッドの基本形は次の通りです。
 
 ```ruby
-ActiveSupport::Notifications.subscribe("event_name.catrgory") do |name, start, finish, id, payload|
+ActiveSupport::Notifications.subscribe("event_name.category") do |name, start, finish, id, payload|
   name    # => イベント名
   start   # => 開始時刻
   finish  # => 終了時刻
