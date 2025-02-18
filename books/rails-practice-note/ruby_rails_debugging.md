@@ -180,7 +180,7 @@ end
 Foo.new.foo #=> "in Debugging module"
 ```
 
-Fooクラスのfooメソッドより前にDebuggingモジュールのfooメソッドが呼ばれるようになります。superを書けば元の(ここではFooクラスの)fooメソッドも呼ぶことができます。
+Fooクラスのfooメソッドより前にDebuggingモジュールのfooメソッドが呼ばれるようになります。prependしたモジュールのfooメソッドでsuperを書けば、元の(ここではFooクラスの)fooメソッドも呼ぶことができます。該当メソッドよりも前に実行したいコードはsuperの前に、該当メソッドよりも後に実行したいコードはsuperの後に書きます。
 
 Fooクラスをレシーバとしてprependメソッドを書くこともできます。
 
