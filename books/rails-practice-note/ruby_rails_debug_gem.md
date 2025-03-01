@@ -4,7 +4,7 @@ title: "[Ruby基礎][Rails基礎] debug gem"
 
 # debug gem
 
-[debug gem](https://github.com/ruby/debug)は2021年に公開されたRuby用のデバッガです。gemをインストールすることでRuby2.6以降で利用可能です。Ruby3.1以降ではbundled gemとしてRubyにデフォルトで添付されています。また、Rails7.0以降でデフォルトで入っているデバッガとなっています。
+[debug gem](https://github.com/ruby/debug)は2021年に公開されたRuby用のデバッガです。gemをインストールすることでRuby2.6以降で利用可能です。Ruby3.1以降ではBundled gemとしてRubyにデフォルトで添付されています。また、Rails7.0以降でデフォルトで入っているデバッガとなっています。
 
 同様の機能を持つツールにbyebug gemがありますが、debug gemはRubyに標準添付されていること、Railsにデフォルトで入っているデバッガであること、開発が活発であること、などの理由からRubyデバッガの第一候補の地位を築いています。
 
