@@ -385,8 +385,8 @@ end
 ## RSpec テストコード構造の基本形
 
 - RSpec テストコード構造の基本形をまとめると次のような構成になります
-    - Model spec以外も同様です
-    - describe, contextが入れ子構造になることもあります
+  - Model spec以外も同様です
+  - describe, contextが入れ子構造になることもあります
 
 ```ruby
 require "rails_helper"
@@ -403,8 +403,6 @@ RSpec.describe Book, type: :model do
   describe "#.メソッド名" do ... end
 end
 ```
-
-- Model specだけでなく、ほかのテストも同様です
 
 ## before: テストの前準備をする道具
 
