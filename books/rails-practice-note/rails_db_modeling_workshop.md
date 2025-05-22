@@ -548,4 +548,4 @@ https://en.wikipedia.org/wiki/Class_diagram より引用
 
 - https://railsguides.jp/association_basics.html
 - Railsで実装するときの基礎が書かれています
-- 1対1、1対多、多対多、ポリモフィック関連、STIといった基礎パターンについても分かりやすい説明があります
+- 1対1、1対多、多対多、ポリモフィック関連、Delegated Types、STIといった基礎パターンについても分かりやすい説明があります
