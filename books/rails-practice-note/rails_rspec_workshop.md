@@ -622,7 +622,9 @@ end
 ## GETするSystem Specを書く
 
 - spec/system/book_spec.rb を以下で作成します
-    - spec/system フォルダがなければあわせて作成してください
+  - spec/system フォルダがなければあわせて作成してください
+  - ファイルのひながたをつくるために以下のgenerateコマンドをつかうこともできます
+    - $ bin/rails generate rspec:system books
 
 ```ruby
 require "rails_helper"
