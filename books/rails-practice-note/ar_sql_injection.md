@@ -54,14 +54,14 @@ SELECT "packages".* FROM "packages" WHERE (code = ''' OR 1) -- ')
 ほとんどのケースで位置指定ハンドラや名前付きハンドラをつかうことでサニタイズが行われますが、LIKE演算子のケースは例外で自動的にはサニタイズが行われません。正確には、WHERE用のサニタイズはされるのですが、LIKE用のサニタイズが行われないという動作になります。
 
 ```ruby
-Package.where("code like ?", "%" + params[:str] + "%")
+Package.where(Arel.sql("code like ?", "%" + params[:str] + "%"))
 # このコードではLIKE用のサニタイズがされない
 ```
 
 LIKE用のサニタイズは`ActiveRecord::Base.sanitize_sql_like`メソッドをつかいます。
 
 ```ruby
-Package.where("code like ?", "%" + ActiveRecord::Base.sanitize_sql_like(params[:str]) + "%")
+Package.where(Arel.sql("code like ?", "%" + ActiveRecord::Base.sanitize_sql_like(params[:str]) + "%"))
 ```
 
 LIKE用のサニタイズでは`%`と`_`がそれぞれ`\\%`と`\\_`に置き換わります。
