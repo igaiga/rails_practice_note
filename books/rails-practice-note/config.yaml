@@ -13,6 +13,7 @@ chapters:
   - ar_delegated_type
   - ar_form_object
   - ar_processing_across_multiple_models
+  - solid_queue
   - rack_middleware_and_rack
   - remaining_variables
   - rails_idioms
