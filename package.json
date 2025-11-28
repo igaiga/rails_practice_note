@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/igaiga/rails_practice_note#readme",
   "dependencies": {
-    "zenn-cli": "^0.1.158"
-  }
+    "zenn-cli": "^0.2.10"
+  },
+  "type": "commonjs"
 }
