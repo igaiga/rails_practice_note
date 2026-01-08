@@ -151,7 +151,7 @@ Continuationsに関する設定
 ```ruby
 class SomethingJob < ApplicationJob
   self.max_resumptions = 3  # 最大再開回数。デフォルトはnil(無制限に再開)。
-  self.resume_options = { wait: 1.seconds, queue: :resumed }
+  self.resume_options = { wait: 2.seconds, queue: :resumed }
   # wait: 再開までの時間。デフォルトは5.seconds。
   # queue: 中断時に入れるキュー。デフォルトは初回と同じ。
 ```
